@@ -1,7 +1,9 @@
 import './TheLibrary.css'
+import { useEffect, useState, useContext } from 'react'
 import { Outlet } from "react-router-dom";
 
 import Navbar from "./nav/Navbar";
+import SearchContext from "../contexts/SearchContext"
 
 function TheLibrary() {
   //TODO: MAYBE COULD LOAD FAVES? that's the only thing that would need to be passed between pages
@@ -21,10 +23,22 @@ function TheLibrary() {
   }, []);
   */
 
+  const [params, setParams] = useState({
+    search: '', // search field
+
+    title: true, // checkbox values
+    author: true,
+    fandoms: true,
+    genre: true,
+    comments: true});
+  const value = { params, setParams };
+
   return <>
-    <Navbar />
-    <br></br>
-    <Outlet />
+    <SearchContext.Provider value={value}>
+      <Navbar />
+      <br></br>
+      <Outlet />
+    </SearchContext.Provider>
   </>
 }
 
