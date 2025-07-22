@@ -11,7 +11,14 @@ const MediaCard = (props) => {
                 { props.author ? <Card.Subtitle>{props.author}</Card.Subtitle> : <></> }
             </ListGroup.Item>
             { props.genre ? <ListGroup.Item>{props.genre}</ListGroup.Item> : <></> }
-            { props.fandoms ? <ListGroup.Item>{props.fandoms}</ListGroup.Item> : <></> }
+            { props.fandoms && props.wordcount ? <ListGroup.Item style={{fontSize: '.8em'}}>
+                <Container className="px-0">
+                    <Row>
+                        <Col>{props.fandoms}</Col>
+                        <Col style={{textAlign: 'right'}}>{props.wordcount}</Col>
+                    </Row>
+                </Container>
+            </ListGroup.Item> : <></> }
             { props.comments ? <ListGroup.Item>{props.comments}</ListGroup.Item> : <></> }
         </ListGroup>
     </Card>

@@ -30,7 +30,15 @@ function TheLibrary() {
     author: true,
     fandoms: true,
     genre: true,
-    comments: true});
+    comments: true, 
+  
+    chapterRadio: "all", // option for single/multi chapter
+
+    upperBound: "", // wordcount range
+    lowerBound: "",
+
+    viewRadio: "card" // option for card/list view
+  });
   const value = { params, setParams };
 
   return <>

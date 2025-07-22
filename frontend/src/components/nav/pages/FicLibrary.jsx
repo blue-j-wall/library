@@ -1,7 +1,8 @@
 import { useEffect, useState, useContext } from 'react'
-import { Container, Row, Col, Pagination, Form } from 'react-bootstrap'
+import { Container, Row, Col, Pagination, Form, Image } from 'react-bootstrap'
 
 import MediaCard from "../../MediaCard.jsx";
+import MediaRow from "../../MediaRow.jsx";
 import SearchContext from '../../../contexts/SearchContext.jsx';
 
 export default function FicLibrary(props) {
@@ -32,40 +33,54 @@ export default function FicLibrary(props) {
         let paramList = params.search.split(/(\s+)/).filter(p => p !== " " && p !== "")
         let filteredLists = [] // array of arrays
 
+        let radioFilter = media; // single/multichap filtering
+        if(params.chapterRadio == "multi") { 
+            radioFilter = media.filter(m => `${m.link.toLowerCase()}`.includes("chapter"));
+        }
+        else if(params.chapterRadio == "single") {
+            radioFilter = media.filter(m => !`${m.link.toLowerCase()}`.includes("chapter"));
+        }
+
+        // have to do error-checking for the wordcount range
+        // lower < upper --> will not do search if lower > upper
+        // lower + empty string is lower and above
+        // upper + empty string is upper and below
+
         if(paramList.length > 0) {
             for(let param of paramList) {
 
                 let filterTitle = []
                 if(params.title) {
-                    filterTitle = media.filter(m => `${m.title.toLowerCase()}`.includes(param));
+                    filterTitle = radioFilter.filter(m => `${m.title.toLowerCase()}`.includes(param));
                 }
                  
                 let filterAuthor = []
                 if(params.author) { // have to account for this eventually being an array; flatten to string
-                    filterAuthor = media.filter(m => `${m.author.toLowerCase()}`.includes(param));
+                    filterAuthor = radioFilter.filter(m => `${m.author.toLowerCase()}`.includes(param));
                 }
 
                 let filterFandoms = []
                 if(params.fandoms) { // have to account for this eventually being an array
-                    filterFandoms = media.filter(m => `${m.fandoms.toLowerCase()}`.includes(param)); 
+                    filterFandoms = radioFilter.filter(m => `${m.fandoms.toLowerCase()}`.includes(param)); 
                 }
 
                 let filterComments = []
                 if(params.comments) {
-                    filterComments = media.filter(m => m.comments != null).filter(m => `${m.comments?.toLowerCase()}`.includes(param));
+                    filterComments = radioFilter.filter(m => m.comments != null).filter(m => `${m.comments?.toLowerCase()}`.includes(param));
                 } 
                     
                 filteredLists.push([...new Set([...filterTitle, ...filterAuthor, ...filterFandoms, ...filterComments])]); // OR
             }
 
-            let intersection = filteredLists[0]
-            for(let list of filteredLists) {
+            let intersection = filteredLists[0] // get intersection of the results for each search term
+            for(let list of filteredLists) { 
                 intersection = intersection.filter(value => list.includes(value)); // AND
             }
+
             setFilteredMedia(intersection);
         }
         else {
-            setFilteredMedia(media);
+            setFilteredMedia(radioFilter);
         }
         
     }, [params]);
@@ -88,15 +103,22 @@ export default function FicLibrary(props) {
         }
     }
 
+
     return <>
         <Container>
         <Row>
             {
-                filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
-                <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                    <MediaCard {...m}/>
-                </Col>
-                )
+                params.viewRadio == "card" ? <>{
+                    filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
+                    <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
+                        <MediaCard {...m}/>
+                    </Col>
+                )}</> : <>{
+                    filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
+                    <Col key={m.id} xl={12}>
+                        <MediaRow {...m}/>
+                    </Col>
+                )}</>
             }
         </Row>
         </Container>

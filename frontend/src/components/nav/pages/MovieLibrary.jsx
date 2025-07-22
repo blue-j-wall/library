@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from 'react'
 import { Container, Row, Col, Pagination, Form } from 'react-bootstrap'
 
 import MediaCard from "../../MediaCard.jsx";
+import MediaRow from "../../MediaRow.jsx";
 import SearchContext from '../../../contexts/SearchContext.jsx';
 
 export default function MovieLibrary(props) {
@@ -87,11 +88,17 @@ export default function MovieLibrary(props) {
         <Container>
         <Row>
             {
-                filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
-                <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                    <MediaCard {...m}/>
-                </Col>
-                )
+                params.viewRadio == "card" ? <>{
+                    filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
+                    <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
+                        <MediaCard {...m}/>
+                    </Col>
+                )}</> : <>{
+                    filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
+                    <Col key={m.id} xl={12}>
+                        <MediaRow {...m}/>
+                    </Col>
+                )}</>
             }
         </Row>
         </Container>

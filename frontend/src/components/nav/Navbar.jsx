@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
-import { Container, Nav, Navbar, Form, Button, DropdownButton, Dropdown } from "react-bootstrap";
+import { Container, Nav, Navbar, Form, Button, DropdownButton, Dropdown, ButtonGroup, ToggleButton, Image } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 
 import SearchContext from '../../contexts/SearchContext';
@@ -8,7 +8,7 @@ export default function PageNavbar(props) {
 
     const { params, setParams } = useContext(SearchContext);
 
-    // CHECKBOX STUFF ---------
+    // CHECKBOX STUFF --------------------
     let checkboxes = ["title"]
     let location = useLocation();
     if (location.pathname == "/fics") {
@@ -23,7 +23,69 @@ export default function PageNavbar(props) {
         checkboxes.push("genre");
     }
     checkboxes.push("comments");
-    // --------------------------
+
+    // RADIO & WORDCOUNT RANGE SELECTION
+    let ficOnly = []
+    if(location.pathname == "/fics") {
+        ficOnly.push(
+            <div>
+                <p>Chapter select:</p>
+                <Form>
+                    <Form.Check
+                        type="radio"
+                        name="chapter-select"
+                        id="all"
+                        label="all works"
+                        checked={params.chapterRadio == "all"}
+                        onChange={(e) => { setParams({...params, chapterRadio:"all"}); }}
+                    />
+                    <Form.Check
+                        type="radio"
+                        name="chapter-select"
+                        id="multi"
+                        label="multichapter only"
+                        checked={params.chapterRadio == "multi"}
+                        onChange={(e) => { setParams({...params, chapterRadio:"multi"}); }}
+                    />
+                    <Form.Check
+                        type="radio"
+                        name="chapter-select"
+                        id="single"
+                        label="single chapter only"
+                        checked={params.chapterRadio == "single"}
+                        onChange={(e) => { setParams({...params, chapterRadio:"single"}); }}
+                    />
+                </Form>
+            </div>
+        )
+        ficOnly.push(
+            <div>
+                <p>Wordcount range:</p>
+                <Form>
+                    <Form.Control 
+                        id="lowerbound-wordcount"
+                        placeholder="lower bound"
+                        aria-label="lower bound"
+                        type="number"
+                        value={params.lowerBound}
+                        onChange={(e) => setParams({...params, lowerBound: e.target.value})}
+                    />
+                    <Form.Control 
+                        id="upperbound-wordcount"
+                        placeholder="upper bound"
+                        aria-label="upper bound"
+                        type="number"
+                        value={params.upperBound}
+                        onChange={(e) => setParams({...params, upperBound: e.target.value})}
+                    />
+                </Form>
+            </div>
+        )
+    }
+
+
+    // -----------------------------------
+
 
     const handleToggle = ({ target }) =>
         setParams({...params, [target.id]: !params[target.id]});
@@ -51,35 +113,71 @@ export default function PageNavbar(props) {
                     <Nav.Link as={Link} to="/shows">Shows</Nav.Link>
                 </Nav>
             </Navbar.Collapse>
+            
+            <ButtonGroup>
+                <ToggleButton
+                    id="card-radio"
+                    type="radio"
+                    variant="outline-success"
+                    name="view-select"
+                    checked={params.viewRadio == "card"}
+                    onChange={(e) => { setParams({...params, viewRadio:"card"}); }}
+                >
+                    <Image src="https://upload.wikimedia.org/wikipedia/commons/9/97/Grid_icon.svg" width="20px"/>
+                </ToggleButton>
+                <ToggleButton
+                    id="list-radio"
+                    type="radio"
+                    variant="outline-success"
+                    name="view-select"
+                    checked={params.viewRadio == "list"}
+                    onChange={(e) => { setParams({...params, viewRadio:"list"}); }}
+                >
+                    <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" width="25px"/>
+                </ToggleButton>
+            </ButtonGroup>
+
+            {/*
+            <Button 
+                id="comments-button"
+                variant="outline-primary"
+                // value
+                // onChange
+            >
+                hide comments
+            </Button>
+            */}
 
             <Form className="d-flex">
                 <Form.Control
                     id="search-bar"
                     type="search"
                     placeholder="⌕ Search"
-                    className="me-2"
+                    className="me-2 rounded-pill"
                     aria-label="Search Media"
                     onChange={(e) => setParams({...params, search: e.target.value})}
                 />
-                <DropdownButton id="dropdown-basic-button" title="Search...">
+
+                <DropdownButton id="dropdown-basic-button" title="Options" variant="dark" bg="dark">
                     <Container>
-                    {
-                        checkboxes.map(checkName => 
-                            <Form.Check
-                                inline
-                                type="checkbox"
-                                key={checkName}
-                                id={checkName}
-                                label={checkName}
-                                onChange={handleToggle}
-                                checked={params[checkName]}
-                            />
-                        )
-                    }
+                        <p>Fields to search:</p>
+                        {
+                            checkboxes.map(checkName => 
+                                <Form.Check
+                                    type="checkbox"
+                                    key={checkName}
+                                    id={checkName}
+                                    label={checkName}
+                                    onChange={handleToggle}
+                                    checked={params[checkName]}
+                                />
+                            )
+                        }
+                        { ficOnly }
                     </Container>
                 </DropdownButton>
             </Form>
-
+            
         </Container>
     </Navbar>
 }
