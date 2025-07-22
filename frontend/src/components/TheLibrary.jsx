@@ -2,7 +2,7 @@ import './TheLibrary.css'
 import { useEffect, useState, useContext } from 'react'
 import { Outlet } from "react-router-dom";
 
-import Navbar from "./nav/Navbar";
+import PageNavbar from "./nav/Navbar";
 import SearchContext from "../contexts/SearchContext"
 
 function TheLibrary() {
@@ -35,7 +35,7 @@ function TheLibrary() {
 
   return <>
     <SearchContext.Provider value={value}>
-      <Navbar />
+      <PageNavbar />
       <br></br>
       <Outlet />
     </SearchContext.Provider>

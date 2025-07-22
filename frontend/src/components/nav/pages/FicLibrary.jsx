@@ -55,12 +55,12 @@ export default function FicLibrary(props) {
                     filterComments = media.filter(m => m.comments != null).filter(m => `${m.comments?.toLowerCase()}`.includes(param));
                 } 
                     
-                filteredLists.push([...new Set([...filterTitle, ...filterAuthor, ...filterFandoms, ...filterComments])]);
+                filteredLists.push([...new Set([...filterTitle, ...filterAuthor, ...filterFandoms, ...filterComments])]); // OR
             }
 
             let intersection = filteredLists[0]
             for(let list of filteredLists) {
-                intersection = intersection.filter(value => list.includes(value));
+                intersection = intersection.filter(value => list.includes(value)); // AND
             }
             setFilteredMedia(intersection);
         }
@@ -73,17 +73,17 @@ export default function FicLibrary(props) {
     // PAGINATION
     const numPages = 24;
     const pages = [];
-    if(media.length <= numPages) {
+    if(filteredMedia.length <= numPages) {
         pages.push(<Pagination.Item onClick={() => setPage(1)} active={page === 1} key={1}>{1}</Pagination.Item>);
     }
     else {
         if(page !== 1) {
             pages.push(<Pagination.Item onClick={() => setPage(page-1)} active={page === page-1} key={"previous"}>Previous</Pagination.Item>);
         }
-        for (let i=1; i <= Math.ceil(media.length/numPages); i++) {
+        for (let i=1; i <= Math.ceil(filteredMedia.length/numPages); i++) {
             pages.push(<Pagination.Item onClick={() => setPage(i)} active={page === i} key={i}>{i}</Pagination.Item>);
         }
-        if(page !== Math.ceil(media.length/numPages)) {
+        if(page !== Math.ceil(filteredMedia.length/numPages)) {
             pages.push(<Pagination.Item onClick={() => setPage(page+1)} active={page === page+1} key={"next"}>Next</Pagination.Item>);
         }
     }

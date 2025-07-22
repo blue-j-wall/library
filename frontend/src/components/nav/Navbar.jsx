@@ -4,17 +4,26 @@ import { Link, useLocation } from "react-router-dom";
 
 import SearchContext from '../../contexts/SearchContext';
 
-export default function BadgerBudsNavbar(props) {
+export default function PageNavbar(props) {
 
     const { params, setParams } = useContext(SearchContext);
 
-    let checkboxes = []
-    if (useLocation().pathname == "/fics") {
-        checkboxes.push("title");
+    // CHECKBOX STUFF ---------
+    let checkboxes = ["title"]
+    let location = useLocation();
+    if (location.pathname == "/fics") {
         checkboxes.push("author");
         checkboxes.push("fandoms");
-        checkboxes.push("comments");
     }
+    else if (location.pathname == "/books") {
+        checkboxes.push("author");
+        checkboxes.push("genre");
+    }
+    else if (location.pathname == "/movies" || location.pathname == "/shows") {
+        checkboxes.push("genre");
+    }
+    checkboxes.push("comments");
+    // --------------------------
 
     const handleToggle = ({ target }) =>
         setParams({...params, [target.id]: !params[target.id]});
@@ -74,5 +83,3 @@ export default function BadgerBudsNavbar(props) {
         </Container>
     </Navbar>
 }
-// s => ({ ...s, [target.name]: !s[target.name] })
-// onChange={(e) => { setParams(e.target.value.trim().toLowerCase()); }}
