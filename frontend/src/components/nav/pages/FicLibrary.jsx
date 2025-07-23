@@ -41,32 +41,35 @@ export default function FicLibrary(props) {
             radioFilter = media.filter(m => !`${m.link.toLowerCase()}`.includes("chapter"));
         }
 
-        // have to do error-checking for the wordcount range
-        // lower < upper --> will not do search if lower > upper
-        // lower + empty string is lower and above
-        // upper + empty string is upper and below
-
+        let wcFilter = radioFilter // wordcount range filter
+        let min = params.lowerBound ? parseInt(params.lowerBound) : 0
+        let max = params.upperBound ? parseInt(params.upperBound) : Number.MAX_VALUE
+        // if min > max --> simply do not filter
+        if(min <= max) {
+            wcFilter = radioFilter.filter(m => m.wordcount >= min && m.wordcount <= max);
+        }
+        
         if(paramList.length > 0) {
             for(let param of paramList) {
 
                 let filterTitle = []
                 if(params.title) {
-                    filterTitle = radioFilter.filter(m => `${m.title.toLowerCase()}`.includes(param));
+                    filterTitle = wcFilter.filter(m => `${m.title.toLowerCase()}`.includes(param));
                 }
                  
                 let filterAuthor = []
                 if(params.author) { // have to account for this eventually being an array; flatten to string
-                    filterAuthor = radioFilter.filter(m => `${m.author.toLowerCase()}`.includes(param));
+                    filterAuthor = wcFilter.filter(m => `${m.author.toLowerCase()}`.includes(param));
                 }
 
                 let filterFandoms = []
                 if(params.fandoms) { // have to account for this eventually being an array
-                    filterFandoms = radioFilter.filter(m => `${m.fandoms.toLowerCase()}`.includes(param)); 
+                    filterFandoms = wcFilter.filter(m => `${m.fandoms.toLowerCase()}`.includes(param)); 
                 }
 
                 let filterComments = []
                 if(params.comments) {
-                    filterComments = radioFilter.filter(m => m.comments != null).filter(m => `${m.comments?.toLowerCase()}`.includes(param));
+                    filterComments = wcFilter.filter(m => m.comments != null).filter(m => `${m.comments?.toLowerCase()}`.includes(param));
                 } 
                     
                 filteredLists.push([...new Set([...filterTitle, ...filterAuthor, ...filterFandoms, ...filterComments])]); // OR
@@ -80,7 +83,7 @@ export default function FicLibrary(props) {
             setFilteredMedia(intersection);
         }
         else {
-            setFilteredMedia(radioFilter);
+            setFilteredMedia(wcFilter);
         }
         
     }, [params]);
@@ -105,7 +108,7 @@ export default function FicLibrary(props) {
 
 
     return <>
-        <Container>
+        <Container style={{wordBreak: 'break-all'}}>
         <Row>
             {
                 params.viewRadio == "card" ? <>{
@@ -113,9 +116,19 @@ export default function FicLibrary(props) {
                     <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
                         <MediaCard {...m}/>
                     </Col>
-                )}</> : <>{
+                )}</> : <>
+                {/* // header - loads before the list
+                    <Col xs={12}><Row>
+                        <Col xs={3}><strong>Title</strong></Col>
+                        <Col xs={2}><strong>Author</strong></Col>
+                        <Col xs={2}><strong>Fandoms</strong></Col> 
+                        <Col xs={1}><strong>Word#</strong></Col>
+                        <Col xs={4}><strong>Comments</strong></Col>
+                    </Row></Col>
+                */}
+                {
                     filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
-                    <Col key={m.id} xl={12}>
+                    <Col key={m.id} xs={12}>
                         <MediaRow {...m}/>
                     </Col>
                 )}</>

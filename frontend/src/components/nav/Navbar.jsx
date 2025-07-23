@@ -28,9 +28,8 @@ export default function PageNavbar(props) {
     let ficOnly = []
     if(location.pathname == "/fics") {
         ficOnly.push(
-            <div>
+            <div key="chapter-select">
                 <p>Chapter select:</p>
-                <Form>
                     <Form.Check
                         type="radio"
                         name="chapter-select"
@@ -55,30 +54,27 @@ export default function PageNavbar(props) {
                         checked={params.chapterRadio == "single"}
                         onChange={(e) => { setParams({...params, chapterRadio:"single"}); }}
                     />
-                </Form>
             </div>
         )
         ficOnly.push(
-            <div>
+            <div key="wordcount-range">
                 <p>Wordcount range:</p>
-                <Form>
-                    <Form.Control 
-                        id="lowerbound-wordcount"
-                        placeholder="lower bound"
-                        aria-label="lower bound"
-                        type="number"
-                        value={params.lowerBound}
-                        onChange={(e) => setParams({...params, lowerBound: e.target.value})}
-                    />
-                    <Form.Control 
-                        id="upperbound-wordcount"
-                        placeholder="upper bound"
-                        aria-label="upper bound"
-                        type="number"
-                        value={params.upperBound}
-                        onChange={(e) => setParams({...params, upperBound: e.target.value})}
-                    />
-                </Form>
+                <Form.Control 
+                    id="lowerbound-wordcount"
+                    placeholder="lower bound"
+                    aria-label="lower bound"
+                    type="number"
+                    value={params.lowerBound}
+                    onChange={(e) => setParams({...params, lowerBound: e.target.value})}
+                />
+                <Form.Control 
+                    id="upperbound-wordcount"
+                    placeholder="upper bound"
+                    aria-label="upper bound"
+                    type="number"
+                    value={params.upperBound}
+                    onChange={(e) => setParams({...params, upperBound: e.target.value})}
+                />
             </div>
         )
     }
@@ -90,7 +86,7 @@ export default function PageNavbar(props) {
     const handleToggle = ({ target }) =>
         setParams({...params, [target.id]: !params[target.id]});
 
-    return <Navbar bg="dark" variant="dark" fixed="top" expand="sm" collapseOnSelect>
+    return <Navbar id="library-navbar" bg="dark" variant="dark" fixed="top" expand="sm" collapseOnSelect>
         <Container>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             {

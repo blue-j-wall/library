@@ -93,7 +93,15 @@ export default function ShowLibrary(props) {
                     <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
                         <MediaCard {...m}/>
                     </Col>
-                )}</> : <>{
+                )}</> : <>
+                {/* // header - loads before the list
+                    <Col xl={12}><Row>
+                        <Col xs={3}><strong>Title</strong></Col>
+                        <Col xs={3}><strong>Genre</strong></Col>
+                        <Col xs={4}><strong>Comments</strong></Col>
+                    </Row></Col>
+                */}
+                {
                     filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
                     <Col key={m.id} xl={12}>
                         <MediaRow {...m}/>
