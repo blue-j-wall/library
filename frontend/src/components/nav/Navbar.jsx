@@ -3,10 +3,12 @@ import { Container, Nav, Navbar, Form, Button, DropdownButton, Dropdown, ButtonG
 import { Link, useLocation } from "react-router-dom";
 
 import SearchContext from '../../contexts/SearchContext';
+import ModeContext from '../../contexts/ModeContext';
 
 export default function PageNavbar(props) {
 
     const { params, setParams } = useContext(SearchContext);
+    const { modes, setModes } = useContext(ModeContext);
 
     // CHECKBOX STUFF --------------------
     let checkboxes = ["title"]
@@ -23,6 +25,9 @@ export default function PageNavbar(props) {
         checkboxes.push("genre");
     }
     checkboxes.push("comments");
+
+    const handleToggle = ({ target }) =>
+        setParams({...params, [target.id]: !params[target.id]});
 
     // RADIO & WORDCOUNT RANGE SELECTION
     let ficOnly = []
@@ -83,9 +88,6 @@ export default function PageNavbar(props) {
     // -----------------------------------
 
 
-    const handleToggle = ({ target }) =>
-        setParams({...params, [target.id]: !params[target.id]});
-
     return <Navbar id="library-navbar" bg="dark" variant="dark" fixed="top" expand="sm" collapseOnSelect>
         <Container>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -110,28 +112,6 @@ export default function PageNavbar(props) {
                 </Nav>
             </Navbar.Collapse>
             
-            <ButtonGroup>
-                <ToggleButton
-                    id="card-radio"
-                    type="radio"
-                    variant="outline-success"
-                    name="view-select"
-                    checked={params.viewRadio == "card"}
-                    onChange={(e) => { setParams({...params, viewRadio:"card"}); }}
-                >
-                    <Image src="https://upload.wikimedia.org/wikipedia/commons/9/97/Grid_icon.svg" width="20px"/>
-                </ToggleButton>
-                <ToggleButton
-                    id="list-radio"
-                    type="radio"
-                    variant="outline-success"
-                    name="view-select"
-                    checked={params.viewRadio == "list"}
-                    onChange={(e) => { setParams({...params, viewRadio:"list"}); }}
-                >
-                    <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" width="25px"/>
-                </ToggleButton>
-            </ButtonGroup>
 
             {/*
             <Button 
@@ -143,6 +123,36 @@ export default function PageNavbar(props) {
                 hide comments
             </Button>
             */}
+
+            
+            <ButtonGroup>
+                <ToggleButton
+                    id="card-radio"
+                    type="radio"
+                    variant="outline-success"
+                    name="view-select"
+                    checked={modes.viewRadio == "card"}
+                    onChange={(e) => { setModes({...modes, viewRadio:"card"}); }}
+                >
+                    <Image src="https://upload.wikimedia.org/wikipedia/commons/9/97/Grid_icon.svg" width="20px"/>
+                </ToggleButton>
+                <ToggleButton
+                    id="list-radio"
+                    type="radio"
+                    variant="outline-success"
+                    name="view-select"
+                    checked={modes.viewRadio == "list"}
+                    onChange={(e) => { setModes({...modes, viewRadio:"list"}); }}
+                >
+                    <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" width="25px"/>
+                </ToggleButton>
+            </ButtonGroup>
+
+            <Button id="editMode" onClick={(e) => { setModes({...modes, editMode: !modes.editMode}); }} variant="secondary">Edit Entries</Button>
+
+            <Button variant="primary">Add Entry</Button>
+
+
 
             <Form className="d-flex">
                 <Form.Control

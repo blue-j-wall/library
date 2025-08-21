@@ -4,6 +4,7 @@ import { Container, Row, Col, Pagination, Form } from 'react-bootstrap'
 import MediaCard from "../../MediaCard.jsx";
 import MediaRow from "../../MediaRow.jsx";
 import SearchContext from '../../../contexts/SearchContext.jsx';
+import ModeContext from '../../../contexts/ModeContext.jsx';
 
 export default function BookLibrary(props) {
 
@@ -11,6 +12,7 @@ export default function BookLibrary(props) {
     const [filteredMedia, setFilteredMedia] = useState([]);
     const [page, setPage] = useState(1);
     const { params, setParams } = useContext(SearchContext);
+    const { modes, setModes } = useContext(ModeContext);
 
     async function load() {
         const resp = await fetch("http://localhost:53706/api/books")
@@ -93,7 +95,7 @@ export default function BookLibrary(props) {
         <Container>
         <Row>
             {
-                params.viewRadio == "card" ? <>{
+                modes.viewRadio == "card" ? <>{
                     filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
                     <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
                         <MediaCard {...m}/>

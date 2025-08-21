@@ -1,8 +1,19 @@
 import { Button, Card, ListGroup, Form, Container, Row, Col } from 'react-bootstrap'
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+
+import ModeContext from '../contexts/ModeContext.jsx';
 
 const MediaCard = (props) => {
 
+    const { modes, setModes } = useContext(ModeContext);
+
+    const handleEdit = () => {
+
+    }
+
+    const handleDelete = () => {
+        
+    }
     
     return <Card style={{marginTop: "1rem"}}>
         <ListGroup variant="flush">
@@ -20,6 +31,14 @@ const MediaCard = (props) => {
                 </Container>
             </ListGroup.Item> : <></> }
             { props.comments ? <ListGroup.Item>{props.comments}</ListGroup.Item> : <></> }
+            {
+                modes.editMode===true ? (
+                    <ListGroup horizontal>
+                        <Button onClick={handleEdit} variant="secondary">Edit</Button>
+                        <Button onClick={handleDelete} variant="danger">Delete</Button>
+                    </ListGroup>
+                ) : (<></>)
+            }
         </ListGroup>
     </Card>
 
