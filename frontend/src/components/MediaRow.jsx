@@ -13,9 +13,8 @@ const MediaRow = (props) => {
     }
 
     const handleDelete = () => {
-        
+        props.delete(props.id, props.title);
     }
-
 
 
     let cols = [<Col key="title" xs={3}>{props.title}</Col>]
@@ -36,12 +35,10 @@ const MediaRow = (props) => {
     cols.push(
         modes.editMode ? (
             <Col key="buttons" xs={2}>
-                <ListGroup horizontal>
-                    <Button onClick={handleEdit} variant="secondary">Edit</Button>
-                    <Button onClick={handleDelete} variant="danger">Delete</Button>
-                </ListGroup>
+                <Button onClick={handleEdit} variant="secondary">Edit</Button>
+                <Button onClick={handleDelete} variant="danger">Delete</Button>     
             </Col>
-        ) : (<></>)
+        ) : <Col key="null" xs={0}></Col>
     )
 
     return <Row>

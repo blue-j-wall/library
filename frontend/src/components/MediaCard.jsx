@@ -8,11 +8,11 @@ const MediaCard = (props) => {
     const { modes, setModes } = useContext(ModeContext);
 
     const handleEdit = () => {
-
+        
     }
 
     const handleDelete = () => {
-        
+        props.delete(props.id, props.title);
     }
     
     return <Card style={{marginTop: "1rem"}}>

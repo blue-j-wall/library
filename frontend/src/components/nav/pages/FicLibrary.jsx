@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
-import { Container, Row, Col, Pagination, Form, Image } from 'react-bootstrap'
+import { Container, Row, Col, Pagination, Modal, Button } from 'react-bootstrap'
 
 import MediaCard from "../../MediaCard.jsx";
 import MediaRow from "../../MediaRow.jsx";
@@ -11,11 +11,14 @@ export default function FicLibrary(props) {
     const [media, setMedia] = useState([]);
     const [filteredMedia, setFilteredMedia] = useState([]);
     const [page, setPage] = useState(1);
+    const [activeEntry, setActiveEntry] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
     const { params, setParams } = useContext(SearchContext);
     const { modes, setModes } = useContext(ModeContext);
 
     async function load() {
-        const resp = await fetch("http://localhost:53706/api/fics")
+        const resp = await fetch("http://localhost:53706/api/media?type=Fics")
         let data = await resp.json();
         setMedia(data);
         setFilteredMedia(data);
@@ -26,6 +29,31 @@ export default function FicLibrary(props) {
     useEffect(() => {
         load();
     }, []);
+
+    const handleHideDeleteModal = () => {
+        setActiveEntry([]);
+        setShowDeleteModal(false);
+    }
+    const handleShowDeleteModal = (entryID, entryTitle) => {
+        setActiveEntry([entryID, entryTitle]);
+        setShowDeleteModal(true);
+    }
+    async function handleDelete() {
+        let id = activeEntry[0];
+        const resp = await fetch(`http://localhost:53706/api/media?type=Fics&id=${id}`, {
+            method: "DELETE"
+        })
+        if (resp.ok) {
+            handleHideDeleteModal();
+            load();
+        }
+        else {
+            alert("Something went wrong.")
+        }
+    }
+
+    const handleEdit = (entryID) => {
+    }
 
     // SEARCH
     useEffect(() => {
@@ -116,28 +144,39 @@ export default function FicLibrary(props) {
                 modes.viewRadio == "card" ? <>{
                     filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
                     <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                        <MediaCard {...m}/>
+                        <MediaCard {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
                     </Col>
-                )}</> : <>
-                {/* // header - loads before the list
-                    <Col xs={12}><Row>
-                        <Col xs={3}><strong>Title</strong></Col>
-                        <Col xs={2}><strong>Author</strong></Col>
-                        <Col xs={2}><strong>Fandoms</strong></Col> 
-                        <Col xs={1}><strong>Word#</strong></Col>
-                        <Col xs={4}><strong>Comments</strong></Col>
-                    </Row></Col>
-                */}
-                {
+                )}</> : <>{
+                    /* // header - loads before the list
+                        <Col xs={12}><Row>
+                            <Col xs={3}><strong>Title</strong></Col>
+                            <Col xs={2}><strong>Author</strong></Col>
+                            <Col xs={2}><strong>Fandoms</strong></Col> 
+                            <Col xs={1}><strong>Word#</strong></Col>
+                            <Col xs={4}><strong>Comments</strong></Col>
+                        </Row></Col>
+                    */
+                
                     filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
                     <Col key={m.id} xs={12}>
-                        <MediaRow {...m}/>
-                    </Col>
-                )}</>
+                        <MediaRow {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
+                    </Col>)
+                }</>
             }
         </Row>
         </Container>
         { pages.length>1 ? <><br/><Pagination> {pages} </Pagination></> : <></> }
+
+        <Modal show={showDeleteModal} onHide={handleHideDeleteModal} backdrop="static" centered>
+            <Modal.Header closeButton>
+                <Modal.Title>Confirm</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Delete the entry "{activeEntry[1]}"?</Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={handleHideDeleteModal}>Cancel</Button>
+                <Button variant="danger" onClick={handleDelete}>Delete</Button>
+            </Modal.Footer>
+        </Modal> 
 
     </>
 }

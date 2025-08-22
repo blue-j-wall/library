@@ -16,11 +16,18 @@ const GET_FIC_SQL = 'SELECT * FROM Fics;'
 const GET_BOOK_SQL = 'SELECT * FROM Books;'
 const GET_MOVIE_SQL = 'SELECT * FROM Movies;'
 const GET_SHOW_SQL = 'SELECT * FROM Shows;'
-/*
-const GET_SPECIFIC_POST_SQL = 'SELECT * FROM BadgerComment WHERE id = ?;'
-const INSERT_POST_SQL = 'INSERT INTO BadgerComment(comment, created) VALUES (?, ?) RETURNING id;'
-const DELETE_POST_SQL = "DELETE FROM BadgerComment WHERE id = ?;"
-*/
+
+const GET_FIC_ENTRY_SQL = 'SELECT * FROM Fics WHERE id = ?;'
+const GET_BOOK_ENTRY_SQL = 'SELECT * FROM Books WHERE id = ?;'
+const GET_MOVIE_ENTRY_SQL = 'SELECT * FROM Movies WHERE id = ?;'
+const GET_SHOW_ENTRY_SQL = 'SELECT * FROM Shows WHERE id = ?;'
+
+const DEL_FIC_ENTRY_SQL = 'DELETE FROM Fics WHERE id = ?;'
+const DEL_BOOK_ENTRY_SQL = 'DELETE FROM Books WHERE id = ?;'
+const DEL_MOVIE_ENTRY_SQL = 'DELETE FROM Movies WHERE id = ?;'
+const DEL_SHOW_ENTRY_SQL = 'DELETE FROM Shows WHERE id = ?;'
+
+//const INSERT_POST_SQL = 'INSERT INTO BadgerComment(comment, created) VALUES (?, ?) RETURNING id;'
 
 const db = await open({
     filename: "./media.db",
@@ -37,11 +44,33 @@ applyLooseCORSPolicy(app);
 applyBodyParsing(app);
 applyLogging(app);
 
-
-app.get('/api/fics', async (req, res) => {
+// LOAD ENTRIES
+app.get('/api/media', async (req, res) => {
+    const table = req.query.type;
     try {
-        const ret = await db.all(GET_FIC_SQL);
-        res.status(200).send(ret);
+        switch(table) {
+        case "Fics":
+            var ret = await db.all(GET_FIC_SQL);
+            res.status(200).send(ret);
+            break;
+        case "Books":
+            var ret = await db.all(GET_BOOK_SQL);
+            res.status(200).send(ret);
+            break;
+        case "Movies":
+            var ret = await db.all(GET_MOVIE_SQL);
+            res.status(200).send(ret);
+            break;
+        case "Shows":
+            var ret = await db.all(GET_SHOW_SQL);
+            res.status(200).send(ret);
+            break;
+        default:
+            res.status(404).send({
+                "msg": "That table was not found!"
+            });
+        } 
+        
     } catch (e) {
         console.error(e);
         res.status(500).send({
@@ -50,41 +79,84 @@ app.get('/api/fics', async (req, res) => {
     }
 })
 
-app.get('/api/books', async (req, res) => {
-    try {
-        const ret = await db.all(GET_BOOK_SQL);
-        res.status(200).send(ret);
-    } catch (e) {
-        console.error(e);
-        res.status(500).send({
-            msg: "Something went wrong!"
-        });
-    }
-})
 
-app.get('/api/movies', async (req, res) => {
+// DELETE ENTRY
+app.delete('/api/media', async (req, res) => {
+    const table = req.query.type;
+    const entryID = req.query.id;
     try {
-        const ret = await db.all(GET_MOVIE_SQL);
-        res.status(200).send(ret);
+        switch(table) {
+        case "Fics":
+            var d = await db.get(GET_FIC_ENTRY_SQL, entryID)
+            if (d) {
+                await db.run(DEL_FIC_ENTRY_SQL, entryID);
+                res.status(200).send({
+                    "msg": "Successfully deleted entry!"
+                })
+            } else {
+                res.status(404).send({
+                    "msg": "That entry was not found!"
+                })
+            }
+            break;
+        case "Books":
+            var d = await db.get(GET_BOOK_ENTRY_SQL, entryID)
+            if (d) {
+                await db.run(DEL_BOOK_ENTRY_SQL, entryID);
+                res.status(200).send({
+                    "msg": "Successfully deleted entry!"
+                })
+            } else {
+                res.status(404).send({
+                    "msg": "That entry was not found!"
+                })
+            }
+            break;
+        case "Movies":
+            var d = await db.get(GET_MOVIE_ENTRY_SQL, entryID)
+            if (d) {
+                await db.run(DEL_MOVIE_ENTRY_SQL, entryID);
+                res.status(200).send({
+                    "msg": "Successfully deleted entry!"
+                })
+            } else {
+                res.status(404).send({
+                    "msg": "That entry was not found!"
+                })
+            }
+            break;
+        case "Shows":
+            var d = await db.get(GET_SHOW_ENTRY_SQL, entryID)
+            if (d) {
+                await db.run(DEL_SHOW_ENTRY_SQL, entryID);
+                res.status(200).send({
+                    "msg": "Successfully deleted entry!"
+                })
+            } else {
+                res.status(404).send({
+                    "msg": "That entry was not found!"
+                })
+            }
+            break;
+        default:
+            res.status(404).send({
+                "msg": "That table was not found!"
+            });
+        } 
     } catch (e) {
         console.error(e);
         res.status(500).send({
             msg: "Something went wrong!"
-        });
+        })
     }
-})
+    
+});
 
-app.get('/api/shows', async (req, res) => {
-    try {
-        const ret = await db.all(GET_SHOW_SQL);
-        res.status(200).send(ret);
-    } catch (e) {
-        console.error(e);
-        res.status(500).send({
-            msg: "Something went wrong!"
-        });
-    }
-})
+// TODO: ADD ENTRY
+
+// TODO: EDIT ENTRY
+
+
 
 /*
 app.post('/api/comments', async (req, res) => {
