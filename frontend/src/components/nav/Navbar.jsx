@@ -148,9 +148,9 @@ export default function PageNavbar(props) {
                 </ToggleButton>
             </ButtonGroup>
 
-            <Button id="editMode" onClick={(e) => { setModes({...modes, editMode: !modes.editMode}); }} variant="secondary">Edit Entries</Button>
+            <Button id="editMode" onClick={(e) => { setModes({...modes, editMode: !modes.editMode}); }} variant="secondary">Edit</Button>
 
-            <Button variant="primary">Add Entry</Button>
+            <Button id="addMode" onClick={(e) => { setModes({...modes, addMode: true}); }} variant="primary">Add</Button>
 
 
 

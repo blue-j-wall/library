@@ -3,19 +3,23 @@ import { Container, Row, Col, Pagination, Modal, Button } from 'react-bootstrap'
 
 import MediaCard from "../../MediaCard.jsx";
 import MediaRow from "../../MediaRow.jsx";
+import DeleteModal from '../../DeleteModal.jsx';
+import AddModal from '../../AddModal.jsx';
 import SearchContext from '../../../contexts/SearchContext.jsx';
 import ModeContext from '../../../contexts/ModeContext.jsx';
+import ActiveEntryContext from '../../../contexts/ActiveEntryContext.jsx';
 
 export default function MovieLibrary(props) {
 
     const [media, setMedia] = useState([])
     const [filteredMedia, setFilteredMedia] = useState([]);
     const [page, setPage] = useState(1);
-    const [activeEntry, setActiveEntry] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showAddModal, setShowAddModal] = useState(false);
 
     const { params, setParams } = useContext(SearchContext);
     const { modes, setModes } = useContext(ModeContext);
+    const { activeEntry, setActiveEntry } = useContext(ActiveEntryContext);
 
     async function load() {
         const resp = await fetch("http://localhost:53706/api/media?type=Movies")
@@ -24,23 +28,42 @@ export default function MovieLibrary(props) {
         setFilteredMedia(data);
         setParams({...params, search: ""}) // reset search
         document.getElementById("search-bar").value = ""; // reset search
+        setModes({...modes, addMode: false}) // so it doesn't pop up between pages
     }
 
     useEffect(() => {
         load();
     }, []);
 
+    //useEffect(() => {
+    //    console.log(activeEntry)
+    //}, [activeEntry]);
+
+    const resetActiveEntry = () => {
+        setActiveEntry({
+            id: null,
+            title: null,
+            author: null,
+            fandoms: null,
+            wordcount: null,
+            comments: null,
+            link: null,
+            genre: null
+        });
+    }
+
+    // HANDLE SPECIFIC ENTRY DELETION
     const handleHideDeleteModal = () => {
-        setActiveEntry([]);
+        resetActiveEntry();
         setShowDeleteModal(false);
     }
     const handleShowDeleteModal = (entryID, entryTitle) => {
-        setActiveEntry([entryID, entryTitle]);
+        resetActiveEntry();
+        setActiveEntry({...activeEntry, id: entryID, title: entryTitle})
         setShowDeleteModal(true);
     }
     async function handleDelete() {
-        let id = activeEntry[0];
-        const resp = await fetch(`http://localhost:53706/api/media?type=Movies&id=${id}`, {
+        const resp = await fetch(`http://localhost:53706/api/media?type=Movies&id=${activeEntry.id}`, {
             method: "DELETE"
         })
         if (resp.ok) {
@@ -52,7 +75,28 @@ export default function MovieLibrary(props) {
         }
     }
 
-    const handleEdit = (entryID) => {
+    // HANDLE SPECIFIC ENTRY EDITING
+    async function handleEdit() {
+
+    }
+
+
+    // HANDLE ADD MODE (trigger-button is on the Navbar)
+    const handleHideAddModal = () => {
+        setModes({...modes, addMode:false});
+    }
+    useEffect(() => {
+        resetActiveEntry();
+        setShowAddModal(modes.addMode);
+    }, [modes.addMode])
+    async function handleAdd(entry) { // should take Object formatted like activeEntry
+
+        console.log(entry);
+
+        // make activeEntry into new entry
+        // call SQL that pulls item from Movies where id is the highest in the table
+        //   then +1 and set new Entry's id to that
+        
     }
 
 
@@ -144,16 +188,9 @@ export default function MovieLibrary(props) {
         { pages.length>1 ? <><br/><Pagination> {pages} </Pagination></> : <></> }
 
 
-        <Modal show={showDeleteModal} onHide={handleHideDeleteModal} backdrop="static" centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Confirm</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>Delete the entry "{activeEntry[1]}"?</Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleHideDeleteModal}>Cancel</Button>
-                <Button variant="danger" onClick={handleDelete}>Delete</Button>
-            </Modal.Footer>
-        </Modal> 
+        <DeleteModal show={showDeleteModal} hide={handleHideDeleteModal} delete={handleDelete} title={activeEntry.title}/>
+
+        <AddModal show={showAddModal} hide={handleHideAddModal} add={handleAdd} type="Movies"/>
 
 
     </>
