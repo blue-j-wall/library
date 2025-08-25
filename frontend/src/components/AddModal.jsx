@@ -102,8 +102,8 @@ const AddModal = (props) => {
             <Form.Group controlId="genre" key="genre">
                 <Form.Label>Genre</Form.Label>
                 <Form.Control
-                    placeholder="Enter genre"
-                    aria-label="Enter genre"
+                    placeholder="Enter genre(s) (separated by commas)"
+                    aria-label="Enter genre(s) (separated by commas)"
                     onChange={handleChange}
                 />
             </Form.Group>

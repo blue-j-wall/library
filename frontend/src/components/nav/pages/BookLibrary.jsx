@@ -22,13 +22,13 @@ export default function BookLibrary(props) {
     const { activeEntry, setActiveEntry } = useContext(ActiveEntryContext);
 
     async function load() {
-        const resp = await fetch("http://localhost:53706/api/media?type=Books")
+        const resp = await fetch("http://localhost:53706/api/media?type=Books");
         let data = await resp.json();
         setMedia(data);
         setFilteredMedia(data);
-        setParams({...params, search: ""}) // reset search
+        setParams({...params, search: ""}); // reset search
         document.getElementById("search-bar").value = ""; // reset search
-        setModes({...modes, addMode: false}) // so it doesn't pop up between pages
+        setModes({...modes, addMode: false}); // so it doesn't pop up between pages
     }
 
     useEffect(() => {
@@ -82,14 +82,24 @@ export default function BookLibrary(props) {
         resetActiveEntry();
         setShowAddModal(modes.addMode);
     }, [modes.addMode])
-    async function handleAdd(entry) { // should take Object formatted like activeEntry
+    async function handleAdd(newEntry) { // should take Object formatted like activeEntry
 
-        console.log(entry);
-
-        // make activeEntry into new entry
-        // call SQL that pulls item from Movies where id is the highest in the table
-        //   then +1 and set new Entry's id to that
-        
+        const resp = await fetch("http://localhost:53706/api/media?type=Books", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                entry: newEntry
+            })
+        })
+        if(resp.ok) {
+            handleHideAddModal();
+            load();
+        }
+        else {
+            alert("Something went wrong.")
+        }
     }
 
     // SEARCH
@@ -158,30 +168,34 @@ export default function BookLibrary(props) {
 
     return <>
         <Container>
-        <Row>
-            {
-                modes.viewRadio == "card" ? <>{
-                    filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
-                    <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                        <MediaCard {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
-                    </Col>
-                )}</> : <>
-                {/* // header - loads before the list
-                    <Col xl={12}><Row>
-                        <Col xs={3}><strong>Title</strong></Col>
-                        <Col xs={2}><strong>Author</strong></Col>
-                        <Col xs={3}><strong>Genre</strong></Col>
-                        <Col xs={4}><strong>Comments</strong></Col>
-                    </Row></Col>
-                */}
+        {
+            media[0] ? 
+            <Row>
                 {
-                    filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
-                    <Col key={m.id} xl={12}>
-                        <MediaRow {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
-                    </Col>
-                )}</>
-            }
-        </Row>
+                    modes.viewRadio == "card" ? <>{
+                        filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
+                        <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
+                            <MediaCard {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
+                        </Col>
+                    )}</> : <>
+                    {/* // header - loads before the list
+                        <Col xl={12}><Row>
+                            <Col xs={3}><strong>Title</strong></Col>
+                            <Col xs={2}><strong>Author</strong></Col>
+                            <Col xs={3}><strong>Genre</strong></Col>
+                            <Col xs={4}><strong>Comments</strong></Col>
+                        </Row></Col>
+                    */}
+                    {
+                        filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
+                        <Col key={m.id} xl={12}>
+                            <MediaRow {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
+                        </Col>
+                    )}</>
+                }
+            </Row> :
+            <p>No books to display!</p>
+        }
         </Container>
         { pages.length>1 ? <><br/><Pagination> {pages} </Pagination></> : <></> }
 

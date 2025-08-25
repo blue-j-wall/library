@@ -22,13 +22,13 @@ export default function FicLibrary(props) {
     const { activeEntry, setActiveEntry } = useContext(ActiveEntryContext);
 
     async function load() {
-        const resp = await fetch("http://localhost:53706/api/media?type=Fics")
+        const resp = await fetch("http://localhost:53706/api/media?type=Fics");
         let data = await resp.json();
         setMedia(data);
         setFilteredMedia(data);
-        setParams({...params, search: ""}) // reset search
+        setParams({...params, search: ""}); // reset search
         document.getElementById("search-bar").value = ""; // reset search
-        setModes({...modes, addMode: false}) // so it doesn't pop up between pages
+        setModes({...modes, addMode: false}); // so it doesn't pop up between pages
     }
 
     useEffect(() => {
@@ -82,14 +82,24 @@ export default function FicLibrary(props) {
         resetActiveEntry();
         setShowAddModal(modes.addMode);
     }, [modes.addMode])
-    async function handleAdd(entry) { // should take Object formatted like activeEntry
+    async function handleAdd(newEntry) { // should take Object formatted like activeEntry
 
-        console.log(entry);
-
-        // make activeEntry into new entry
-        // call SQL that pulls item from Movies where id is the highest in the table
-        //   then +1 and set new Entry's id to that
-        
+        const resp = await fetch("http://localhost:53706/api/media?type=Fics", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                entry: newEntry
+            })
+        })
+        if(resp.ok) {
+            handleHideAddModal();
+            load();
+        }
+        else {
+            alert("Something went wrong.")
+        }
     }
 
     // SEARCH
@@ -176,31 +186,35 @@ export default function FicLibrary(props) {
 
     return <>
         <Container style={{wordBreak: 'break-all'}}>
-        <Row>
-            {
-                modes.viewRadio == "card" ? <>{
-                    filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
-                    <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                        <MediaCard {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
-                    </Col>
-                )}</> : <>{
-                    /* // header - loads before the list
-                        <Col xs={12}><Row>
-                            <Col xs={3}><strong>Title</strong></Col>
-                            <Col xs={2}><strong>Author</strong></Col>
-                            <Col xs={2}><strong>Fandoms</strong></Col> 
-                            <Col xs={1}><strong>Word#</strong></Col>
-                            <Col xs={4}><strong>Comments</strong></Col>
-                        </Row></Col>
-                    */
-                
-                    filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
-                    <Col key={m.id} xs={12}>
-                        <MediaRow {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
-                    </Col>)
-                }</>
-            }
-        </Row>
+        {
+            media[0] ? 
+            <Row>
+                {
+                    modes.viewRadio == "card" ? <>{
+                        filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
+                        <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
+                            <MediaCard {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
+                        </Col>
+                    )}</> : <>{
+                        /* // header - loads before the list
+                            <Col xs={12}><Row>
+                                <Col xs={3}><strong>Title</strong></Col>
+                                <Col xs={2}><strong>Author</strong></Col>
+                                <Col xs={2}><strong>Fandoms</strong></Col> 
+                                <Col xs={1}><strong>Word#</strong></Col>
+                                <Col xs={4}><strong>Comments</strong></Col>
+                            </Row></Col>
+                        */
+                    
+                        filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
+                        <Col key={m.id} xs={12}>
+                            <MediaRow {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
+                        </Col>)
+                    }</>
+                }
+            </Row> :
+            <p>No fics to display!</p>
+        }
         </Container>
         { pages.length>1 ? <><br/><Pagination> {pages} </Pagination></> : <></> }
 
