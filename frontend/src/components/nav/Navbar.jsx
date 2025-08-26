@@ -151,12 +151,12 @@ export default function PageNavbar(props) {
                 </Nav>
 
                 <Nav className="d-flex ms-auto justify-content-end">
-                    <ListGroup id="icons" className="d-flex justify-content-start" horizontal>
-                        <ListGroup.Item ><a id="cardMode" className="modeIcon d-flex" onClick={() => setModes({...modes, cardMode: !modes.cardMode})}> 
+                    <ListGroup id="nav-icons" className="d-flex justify-content-start" horizontal>
+                        <ListGroup.Item ><a id="cardMode" className="d-flex" onClick={() => setModes({...modes, cardMode: !modes.cardMode})}> 
                             {modes.cardMode ? <IoGridOutline/> : <FaList/>} </a></ListGroup.Item>
-                        <ListGroup.Item ><a id="editMode" className="modeIcon d-flex" onClick={handleEditToggle}>
+                        <ListGroup.Item ><a id="editMode" className="d-flex" onClick={handleEditToggle}>
                             <FaEdit/> </a></ListGroup.Item>
-                        <ListGroup.Item ><a id="addMode" className="modeIcon d-flex" onClick={() => setModes({...modes, addMode: true})}>
+                        <ListGroup.Item ><a id="addMode" className="d-flex" onClick={() => setModes({...modes, addMode: true})}>
                             <MdLibraryAdd/> </a></ListGroup.Item>
                     </ListGroup>
                 </Nav>

@@ -1,6 +1,8 @@
 import { Button, Card, ListGroup, Form, Container, Row, Col } from 'react-bootstrap'
 import { useState, useEffect, useContext } from "react";
 
+import { MdEdit, MdDelete } from "react-icons/md";
+
 import ModeContext from '../contexts/ModeContext.jsx';
 import ActiveEntryContext from '../contexts/ActiveEntryContext.jsx';
 
@@ -43,15 +45,15 @@ const MediaCard = (props) => {
                 </Container>
             </ListGroup.Item> : <></> }
             { props.comments ? <ListGroup.Item>{props.comments}</ListGroup.Item> : <></> }
-            {
-                modes.editMode===true ? (
-                    <ListGroup horizontal>
-                        <Button onClick={handleEdit} variant="secondary">Edit</Button>
-                        <Button onClick={handleDelete} variant="danger">Delete</Button>
-                    </ListGroup>
-                ) : (<></>)
-            }
         </ListGroup>
+        {
+            modes.editMode===true ? (
+                <div id="card-icons" className="d-flex justify-content-end">
+                    <a onClick={handleEdit}><MdEdit/></a>
+                    <a onClick={handleDelete}><MdDelete/></a>
+                </div>
+            ) : (<></>)
+        }
     </Card>
 
     /*
