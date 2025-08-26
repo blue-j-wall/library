@@ -2,16 +2,28 @@ import { Button, Card, ListGroup, Form, Container, Row, Col } from 'react-bootst
 import { useState, useEffect, useContext } from "react";
 
 import ModeContext from '../contexts/ModeContext.jsx';
+import ActiveEntryContext from '../contexts/ActiveEntryContext.jsx';
 
 const MediaCard = (props) => {
 
     const { modes, setModes } = useContext(ModeContext);
+    const { activeEntry, setActiveEntry } = useContext(ActiveEntryContext);
 
-    const handleEdit = () => {
-        
+    const handleEdit = () => { // activates editModal
+        setActiveEntry({
+            id: props.id,
+            title: props.title,
+            author: props.author,
+            fandoms: props.fandoms,
+            wordcount: props.wordcount,
+            comments: props.comments,
+            link: props.link,
+            genre: props.genre
+        });
+        props.edit();
     }
 
-    const handleDelete = () => {
+    const handleDelete = () => { // activates deleteModal
         props.delete(props.id, props.title);
     }
     

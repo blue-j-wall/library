@@ -10,7 +10,7 @@ const DeleteModal = (props) => {
         <Modal.Body>Delete the entry "{props.title}"?</Modal.Body>
         <Modal.Footer>
             <Button variant="secondary" onClick={props.hide}>Cancel</Button>
-            <Button variant="danger" onClick={props.delete}>Delete</Button>
+            <Button variant="danger" onClick={props.confirm}>Delete</Button>
         </Modal.Footer>
     </Modal> 
 

@@ -51,6 +51,9 @@ a {
 a:hover {
   color: #ffeb84 !important;
 }
+.nav-link.active {
+  color: #e8c618 !important;
+}
 /* icons */
 #icons .list-group-item {
   background-color: inherit;
@@ -59,7 +62,7 @@ a:hover {
   line-height: .8em;
 }
 .active a#editMode {
-  color: rgb(232, 198, 24) !important;
+  color: #e8c618 !important;
 }
 .active a#editMode:hover {
   color: #ffeb84 !important;

@@ -212,31 +212,31 @@ app.post('/api/media', async (req, res) => {
     try {
         switch(table) {
         case "Fics":
-            let ret = await db.get(ADD_FIC_SQL, entry.title, entry.author, entry.fandoms, entry.wordcount, entry.comments, entry.link);
+            const retFic = await db.get(ADD_FIC_SQL, entry.title, entry.author, entry.fandoms, entry.wordcount, entry.comments, entry.link);
             res.status(200).send({
                 msg: "Successfully posted!",
-                id: ret.id
+                id: retFic.id
             });
             break;
         case "Books":
-            ret = await db.get(ADD_BOOK_SQL, entry.title, entry.author, entry.genre, entry.comments);
+            const retBook = await db.get(ADD_BOOK_SQL, entry.title, entry.author, entry.genre, entry.comments);
             res.status(200).send({
                 msg: "Successfully posted!",
-                id: ret.id
+                id: retBook.id
             });
             break;
         case "Movies":
-            ret = await db.get(ADD_MOVIE_SQL, entry.title, entry.genre, entry.comments);
+            const retMovie = await db.get(ADD_MOVIE_SQL, entry.title, entry.genre, entry.comments);
             res.status(200).send({
                 msg: "Successfully posted!",
-                id: ret.id
+                id: retMovie.id
             });
             break;
         case "Shows":
-            ret = await db.get(ADD_SHOW_SQL, entry.title, entry.genre, entry.comments);
+            const retShow = await db.get(ADD_SHOW_SQL, entry.title, entry.genre, entry.comments);
             res.status(200).send({
                 msg: "Successfully posted!",
-                id: ret.id
+                id: retShow.id
             });
             break;
         default:

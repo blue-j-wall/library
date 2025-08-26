@@ -129,26 +129,28 @@ export default function PageNavbar(props) {
         <Container>
             <Navbar.Toggle aria-controls="responsive-navbar-group" />
             
-            <Navbar.Brand as={Link} to="/">
+            <Navbar.Brand>
+                {/*
                 <img
                     alt="book stack emoji"
                     src="https://em-content.zobj.net/source/apple/419/books_1f4da.png"
                     width="30"
                     height="30"
                     className="d-inline-block align-top"
-                />{' '}
+                />{' '}*/}
                 The Library
             </Navbar.Brand>
             
             <Navbar.Collapse id="responsive-navbar-group">
                 <Nav>
+                    <Nav.Link as={Link} to="/" href="/">Home</Nav.Link>
                     <Nav.Link as={Link} to="/fics" href="/fics">Fanfics</Nav.Link>
                     <Nav.Link as={Link} to="/books" href="/books">Books</Nav.Link>
                     <Nav.Link as={Link} to="/movies" href="/movies">Movies</Nav.Link>
                     <Nav.Link as={Link} to="/shows" href="/shows">Shows</Nav.Link>
                 </Nav>
 
-                <Nav className="d-flex ms-auto justify-content-end" horizontal>
+                <Nav className="d-flex ms-auto justify-content-end">
                     <ListGroup id="icons" className="d-flex justify-content-start" horizontal>
                         <ListGroup.Item ><a id="cardMode" className="modeIcon d-flex" onClick={() => setModes({...modes, cardMode: !modes.cardMode})}> 
                             {modes.cardMode ? <IoGridOutline/> : <FaList/>} </a></ListGroup.Item>

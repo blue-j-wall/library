@@ -5,6 +5,7 @@ import MediaCard from "../../MediaCard.jsx";
 import MediaRow from "../../MediaRow.jsx";
 import DeleteModal from '../../DeleteModal.jsx';
 import AddModal from '../../AddModal.jsx';
+import EditModal from '../../EditModal.jsx';
 import SearchContext from '../../../contexts/SearchContext.jsx';
 import ModeContext from '../../../contexts/ModeContext.jsx';
 import ActiveEntryContext from '../../../contexts/ActiveEntryContext.jsx';
@@ -16,6 +17,7 @@ export default function BookLibrary(props) {
     const [page, setPage] = useState(1);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const { params, setParams } = useContext(SearchContext);
     const { modes, setModes } = useContext(ModeContext);
@@ -71,7 +73,17 @@ export default function BookLibrary(props) {
         }
     }
 
-    const handleEdit = (entryID) => {
+    // HANDLE SPECIFIC ENTRY EDITING
+    const handleHideEditModal = () => {
+        resetActiveEntry();
+        setShowEditModal(false);
+    }
+    const handleShowEditModal = () => {
+        setShowEditModal(true);
+    }
+    async function handleEdit(editedEntry) {
+        console.log(editedEntry);
+        handleHideEditModal();
     }
 
     // HANDLE ADD MODE (trigger-button is on the Navbar)
@@ -175,7 +187,7 @@ export default function BookLibrary(props) {
                     modes.cardMode ? <>{
                         filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
                         <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                            <MediaCard {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
+                            <MediaCard {...m} delete={handleShowDeleteModal} edit={handleShowEditModal}/>
                         </Col>
                     )}</> : <>
                     {/* // header - loads before the list
@@ -189,7 +201,7 @@ export default function BookLibrary(props) {
                     {
                         filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
                         <Col key={m.id} xl={12}>
-                            <MediaRow {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
+                            <MediaRow {...m} delete={handleShowDeleteModal} edit={handleShowEditModal}/>
                         </Col>
                     )}</>
                 }
@@ -199,9 +211,11 @@ export default function BookLibrary(props) {
         </Container>
         { pages.length>1 ? <><br/><Pagination> {pages} </Pagination></> : <></> }
 
-        <DeleteModal show={showDeleteModal} hide={handleHideDeleteModal} delete={handleDelete} title={activeEntry.title}/>
+        <DeleteModal show={showDeleteModal} hide={handleHideDeleteModal} confirm={handleDelete} title={activeEntry.title}/>
 
-        <AddModal show={showAddModal} hide={handleHideAddModal} add={handleAdd} type="Books"/>
+        <AddModal show={showAddModal} hide={handleHideAddModal} confirm={handleAdd} type="Books"/>
+
+        <EditModal show={showEditModal} hide={handleHideEditModal} confirm={handleEdit} type="Books"/>
 
     </>
 }

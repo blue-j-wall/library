@@ -2,16 +2,17 @@ import { Modal, Button, Form, InputGroup, ButtonGroup } from 'react-bootstrap'
 import { useState, useEffect, useContext } from 'react'
 
 import ModeContext from '../contexts/ModeContext';
+import ActiveEntryContext from '../contexts/ActiveEntryContext';
 
-const AddModal = (props) => {
+const EditModal = (props) => {
 
-    const { modes, setModes } = useContext(ModeContext);
-    const [entry, setEntry] = useState();
+    const { activeEntry, setActiveEntry } = useContext(ActiveEntryContext);
+    const [entry, setEntry] = useState({});
     const [validated, setValidated] = useState(false);
 
-    useEffect(() => {
+    const resetEntry = () => {
         setEntry({
-            id: null, // should be set in [...]Library's handleAdd() function
+            id: null,
             title: null,
             author: null,
             fandoms: null,
@@ -20,23 +21,26 @@ const AddModal = (props) => {
             link: null,
             genre: null
         });
+    }
+    
+    useEffect(() => { // load activeEntry into entry
+        if(props.show) setEntry(activeEntry);
+        else resetEntry();
         setValidated(false);
-    }, [modes.addMode]);
+    }, [props.show]);
 
     const handleChange = ({ target }) =>
         setEntry({...entry, [target.id]: target.value});
 
     const handleSubmit = (e) => {
-        
         setValidated(true);
-
         const form = e.target;
         if (form.checkValidity() === true) {
            props.confirm(entry);
         }
- 
     };
 
+    // SET UP FORMS W/ PRE-LOADED CONTENTS FROM ENTRY
     let forms = [
         <Form.Group controlId="title" key="title">
             <Form.Label>Title</Form.Label>
@@ -45,6 +49,7 @@ const AddModal = (props) => {
                     placeholder="Enter title"
                     aria-label="Enter title"
                     onChange={handleChange}
+                    value={entry.title}
                     required
                 />
                 <Form.Control.Feedback type="invalid">
@@ -61,6 +66,7 @@ const AddModal = (props) => {
                     placeholder="Enter author"
                     aria-label="Enter author"
                     onChange={handleChange}
+                    value={entry.author}
                 />
             </Form.Group>
         );
@@ -73,6 +79,7 @@ const AddModal = (props) => {
                     placeholder="Enter fandoms (separated by commas)"
                     aria-label="Enter fandoms (separated by commas)"
                     onChange={handleChange}
+                    value={entry.fandoms}
                 />
             </Form.Group>,
 
@@ -83,6 +90,7 @@ const AddModal = (props) => {
                     aria-label="Enter wordcount"
                     onChange={handleChange}
                     type="number"
+                    value={entry.wordcount}
                 />
             </Form.Group>,
 
@@ -93,6 +101,7 @@ const AddModal = (props) => {
                     aria-label="Enter link"
                     onChange={handleChange}
                     type="url"
+                    value={entry.link}
                 />
             </Form.Group>
         );
@@ -105,6 +114,7 @@ const AddModal = (props) => {
                     placeholder="Enter genre(s) (separated by commas)"
                     aria-label="Enter genre(s) (separated by commas)"
                     onChange={handleChange}
+                    value={entry.genre}
                 />
             </Form.Group>
         );
@@ -116,13 +126,14 @@ const AddModal = (props) => {
                 placeholder="Enter comments"
                 aria-label="Enter comments"
                 onChange={handleChange}
+                value={entry.comments}
             />
         </Form.Group>
     );
 
     return <Modal show={props.show} onHide={props.hide} centered>
         <Modal.Header closeButton>
-            <Modal.Title>Add Entry</Modal.Title>
+            <Modal.Title>Edit Entry</Modal.Title>
         </Modal.Header>
         <Modal.Body>
             <Form noValidate validated={validated} onSubmit={handleSubmit} 
@@ -130,7 +141,7 @@ const AddModal = (props) => {
                 { forms }
                 <ButtonGroup className="d-flex flex-row">
                     <Button variant="secondary" onClick={props.hide}>Cancel</Button>
-                    <Button variant="primary" type="submit">Add</Button>
+                    <Button variant="primary" type="submit">Confirm</Button>
                 </ButtonGroup>
             </Form>
         </Modal.Body>
@@ -138,4 +149,4 @@ const AddModal = (props) => {
 
 }
 
-export default AddModal;
+export default EditModal;
