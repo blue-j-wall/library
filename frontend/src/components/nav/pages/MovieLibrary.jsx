@@ -148,7 +148,7 @@ export default function MovieLibrary(props) {
     }, [params]);
 
     // PAGINATION
-    const numPages = 24;
+    const numPages = 24; // # entries per page
     const pages = [];
     if(filteredMedia.length <= numPages) {
         pages.push(<Pagination.Item onClick={() => setPage(1)} active={page === 1} key={1}>{1}</Pagination.Item>);
@@ -171,7 +171,7 @@ export default function MovieLibrary(props) {
             media[0] ? 
             <Row>
                 {
-                    modes.viewRadio == "card" ? <>{
+                    modes.cardMode ? <>{
                         filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
                         <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
                             <MediaCard {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
@@ -192,7 +192,7 @@ export default function MovieLibrary(props) {
                     )}</>
                 }
             </Row> :
-            <p>No movies to display!</p>
+            <h1 className="no-entries-message">No movies to display!</h1>
         }
         </Container>
         { pages.length>1 ? <><br/><Pagination> {pages} </Pagination></> : <></> }

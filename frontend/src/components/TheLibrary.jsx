@@ -1,4 +1,3 @@
-import './TheLibrary.css'
 import { useEffect, useState, useContext } from 'react'
 import { Outlet } from "react-router-dom";
 
@@ -28,7 +27,7 @@ function TheLibrary() {
   const searchValue = { params, setParams };
 
   const [modes, setModes] = useState({
-    viewRadio: "card", // option for card/list view
+    cardMode: true, // option for card/list view
 
     editMode: false, // option for edit/delete mode (site-wide)
     addMode: false // whether 'add new entry' modal is active or not
@@ -52,8 +51,7 @@ function TheLibrary() {
     <ModeContext.Provider value={modeValue}>
     <ActiveEntryContext.Provider value={entryValue}>
       <PageNavbar />
-      <br></br>
-      <Outlet />
+      <div id="full-page"><Outlet /></div>
     </ActiveEntryContext.Provider>
     </ModeContext.Provider>
     </SearchContext.Provider>

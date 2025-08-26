@@ -41,7 +41,7 @@ const MediaRow = (props) => {
         ) : <Col key="null" xs={0}></Col>
     )
 
-    return <Row>
+    return <Row className="media-row">
         { cols }
     </Row>
   

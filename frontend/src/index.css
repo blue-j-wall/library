@@ -1,3 +1,87 @@
+:root { /*<html>*/
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root { /*React's equivalent to <body>*/
+  margin: 0 auto;
+  padding: 1rem;
+  background-image: linear-gradient(#87CEEB, #34609b);
+}
+
+#full-page {
+  min-height: 100vh;
+  max-width: 1280px;
+  min-width: 320px;
+  margin: auto;
+  margin-top: 2.5rem;
+}
+
+h1.no-entries-message {
+  margin-top: 4rem;
+  text-align: center;
+  color: rgb(215, 237, 246);
+}
+
+/* ENTRIES */
+.media-card {
+  margin-top: .25rem; /* spacing between cards */
+  margin-bottom: .25rem;
+  padding: .5rem; /* spacing between card contents and borders */
+  
+}
+.media-row {
+  margin-top: .5rem; 
+  margin-bottom: .5rem;
+  padding-top: .25rem;
+  padding-bottom: .25rem;
+  background-color: white;
+}
+
+/* NAVBAR */
+a {
+  color: #a4d6e0 !important;
+}
+a:hover {
+  color: #ffeb84 !important;
+}
+/* icons */
+#icons .list-group-item {
+  background-color: inherit;
+  border: 0px;
+  font-size: 1.6em;
+  line-height: .8em;
+}
+.active a#editMode {
+  color: rgb(232, 198, 24) !important;
+}
+.active a#editMode:hover {
+  color: #ffeb84 !important;
+}
+/* search */
+#search-form {
+  width: 30%;
+}
+.dropdown-toggle::before {
+  display: none !important; 
+}
+#search-dropdown {
+  padding: 0rem !important;
+  color: #a4d6e0;
+}
+#search-dropdown:hover {
+  color: #ffeb84;
+}
+
+
+
+/*
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -66,3 +150,54 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: start;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: .7em;
+}
+
+.form-check {
+  font-size: .9em;
+  color: #888;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+*/

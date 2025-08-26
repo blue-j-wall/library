@@ -167,7 +167,7 @@ export default function ShowLibrary(props) {
             media[0] ? 
             <Row>
                 {
-                    modes.viewRadio == "card" ? <>{
+                    modes.cardMode ? <>{
                         filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
                         <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
                             <MediaCard {...m} delete={handleShowDeleteModal} edit={handleEdit}/>
@@ -188,7 +188,7 @@ export default function ShowLibrary(props) {
                     )}</>
                 }
             </Row> :
-            <p>No shows to display!</p>
+            <h1 className="no-entries-message">No shows to display!</h1>
         }
         </Container>
         { pages.length>1 ? <><br/><Pagination> {pages} </Pagination></> : <></> }

@@ -1,6 +1,11 @@
 import { useEffect, useState, useContext } from 'react'
-import { Container, Nav, Navbar, Form, Button, DropdownButton, Dropdown, ButtonGroup, ToggleButton, Image } from "react-bootstrap";
+import { Container, Nav, Navbar, Form, ListGroup, DropdownButton, Dropdown, ButtonGroup, ToggleButton, Image } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
+
+import { IoOptions, IoGridOutline } from "react-icons/io5";
+import { FaEdit, FaList } from "react-icons/fa";
+import { MdLibraryAdd } from "react-icons/md";
+import useBreakpoint from 'use-breakpoint';
 
 import SearchContext from '../../contexts/SearchContext';
 import ModeContext from '../../contexts/ModeContext';
@@ -10,7 +15,33 @@ export default function PageNavbar(props) {
     const { params, setParams } = useContext(SearchContext);
     const { modes, setModes } = useContext(ModeContext);
 
-    // CHECKBOX STUFF --------------------
+    // HANDLE EDIT TOGGLE
+    const handleEditToggle = () => {
+        setModes({...modes, editMode: !modes.editMode});
+        var element = document.getElementById("root");
+        element.classList.toggle("active");
+    }
+
+    // HIDING SEARCHBAR IN MENU
+    const [expanded, setExpanded] = useState(false);
+    const [searchVisibile, setSearchVisibile] = useState("visible");
+    const expandBreakpoint = "md"; // standard navbar md+, collapses at sm
+    const BREAKPOINTS = { 1: 0, 2: 576, 3: 768, 4: 992, 5: 1200, 6: 1400 } // xs, sm, md, lg, xl, xxl
+    const { breakpoint, maxWidth, minWidth } = useBreakpoint(BREAKPOINTS)
+    useEffect(() => {
+        if(breakpoint > 2) {
+            setExpanded(false); 
+            setSearchVisibile("visible"); 
+        }
+        else if(expanded) {
+            setSearchVisibile("hidden");
+        }
+        else {
+            setSearchVisibile("visible");
+        }
+    }, [breakpoint, expanded]);
+
+    // CHECKBOX STUFF 
     let checkboxes = ["title"]
     let location = useLocation();
     if (location.pathname == "/fics") {
@@ -85,86 +116,61 @@ export default function PageNavbar(props) {
     }
 
 
-    // -----------------------------------
+    // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 
-    return <Navbar id="library-navbar" bg="dark" variant="dark" fixed="top" expand="sm" collapseOnSelect>
+    return <Navbar 
+        id="library-navbar"
+        bg="dark" data-bs-theme="dark" 
+        fixed="top" expand={expandBreakpoint} collapseOnSelect
+        expanded={expanded}
+        onToggle={() => {setExpanded(!expanded)}}
+    >
         <Container>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            {
-                <Navbar.Brand as={Link} to="/">
-                    <img
-                        alt="book stack emoji"
-                        src="https://em-content.zobj.net/source/apple/419/books_1f4da.png"
-                        width="30"
-                        height="30"
-                        className="d-inline-block align-top"
-                    />{' '}
-                    The Library
-                </Navbar.Brand>
-            }
-            <Navbar.Collapse id="responsive-navbar-nav" className="me-auto">
+            <Navbar.Toggle aria-controls="responsive-navbar-group" />
+            
+            <Navbar.Brand as={Link} to="/">
+                <img
+                    alt="book stack emoji"
+                    src="https://em-content.zobj.net/source/apple/419/books_1f4da.png"
+                    width="30"
+                    height="30"
+                    className="d-inline-block align-top"
+                />{' '}
+                The Library
+            </Navbar.Brand>
+            
+            <Navbar.Collapse id="responsive-navbar-group">
                 <Nav>
-                    <Nav.Link as={Link} to="/fics">Fanfics</Nav.Link>
-                    <Nav.Link as={Link} to="/books">Books</Nav.Link>
-                    <Nav.Link as={Link} to="/movies">Movies</Nav.Link>
-                    <Nav.Link as={Link} to="/shows">Shows</Nav.Link>
+                    <Nav.Link as={Link} to="/fics" href="/fics">Fanfics</Nav.Link>
+                    <Nav.Link as={Link} to="/books" href="/books">Books</Nav.Link>
+                    <Nav.Link as={Link} to="/movies" href="/movies">Movies</Nav.Link>
+                    <Nav.Link as={Link} to="/shows" href="/shows">Shows</Nav.Link>
+                </Nav>
+
+                <Nav className="d-flex ms-auto justify-content-end" horizontal>
+                    <ListGroup id="icons" className="d-flex justify-content-start" horizontal>
+                        <ListGroup.Item ><a id="cardMode" className="modeIcon d-flex" onClick={() => setModes({...modes, cardMode: !modes.cardMode})}> 
+                            {modes.cardMode ? <IoGridOutline/> : <FaList/>} </a></ListGroup.Item>
+                        <ListGroup.Item ><a id="editMode" className="modeIcon d-flex" onClick={handleEditToggle}>
+                            <FaEdit/> </a></ListGroup.Item>
+                        <ListGroup.Item ><a id="addMode" className="modeIcon d-flex" onClick={() => setModes({...modes, addMode: true})}>
+                            <MdLibraryAdd/> </a></ListGroup.Item>
+                    </ListGroup>
                 </Nav>
             </Navbar.Collapse>
-            
 
-            {/*
-            <Button 
-                id="comments-button"
-                variant="outline-primary"
-                // value
-                // onChange
-            >
-                hide comments
-            </Button>
-            */}
-
-            
-            <ButtonGroup>
-                <ToggleButton
-                    id="card-radio"
-                    type="radio"
-                    variant="outline-success"
-                    name="view-select"
-                    checked={modes.viewRadio == "card"}
-                    onChange={(e) => { setModes({...modes, viewRadio:"card"}); }}
-                >
-                    <Image src="https://upload.wikimedia.org/wikipedia/commons/9/97/Grid_icon.svg" width="20px"/>
-                </ToggleButton>
-                <ToggleButton
-                    id="list-radio"
-                    type="radio"
-                    variant="outline-success"
-                    name="view-select"
-                    checked={modes.viewRadio == "list"}
-                    onChange={(e) => { setModes({...modes, viewRadio:"list"}); }}
-                >
-                    <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" width="25px"/>
-                </ToggleButton>
-            </ButtonGroup>
-
-            <Button id="editMode" onClick={(e) => { setModes({...modes, editMode: !modes.editMode}); }} variant="secondary">Edit</Button>
-
-            <Button id="addMode" onClick={(e) => { setModes({...modes, addMode: true}); }} variant="primary">Add</Button>
-
-
-
-            <Form className="d-flex">
+            <Form id="search-form" className="d-flex" style={{visibility:`${searchVisibile}`}}> {/**/}
                 <Form.Control
                     id="search-bar"
                     type="search"
                     placeholder="⌕ Search"
                     className="me-2 rounded-pill"
                     aria-label="Search Media"
+                    value={params.search}
                     onChange={(e) => setParams({...params, search: e.target.value})}
                 />
-
-                <DropdownButton id="dropdown-basic-button" title="Options" variant="dark" bg="dark">
+                <DropdownButton id="search-dropdown" title={<IoOptions id="search-options"/>} variant="outline-dark" size="lg" drop="start">
                     <Container>
                         <p>Fields to search:</p>
                         {
@@ -182,7 +188,7 @@ export default function PageNavbar(props) {
                         { ficOnly }
                     </Container>
                 </DropdownButton>
-            </Form>
+            </Form> 
             
         </Container>
     </Navbar>

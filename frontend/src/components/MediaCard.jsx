@@ -15,7 +15,7 @@ const MediaCard = (props) => {
         props.delete(props.id, props.title);
     }
     
-    return <Card style={{marginTop: "1rem"}}>
+    return <Card className="media-card">
         <ListGroup variant="flush">
             <ListGroup.Item>
                 <Card.Title>{props.title}</Card.Title>
