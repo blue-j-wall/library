@@ -12,20 +12,20 @@ const app = express();
 const port = 53706;
 
 
-const GET_FIC_SQL = 'SELECT * FROM Fics;'
-const GET_BOOK_SQL = 'SELECT * FROM Books;'
-const GET_MOVIE_SQL = 'SELECT * FROM Movies;'
-const GET_SHOW_SQL = 'SELECT * FROM Shows;'
+const GET_FICS_TABLE_SQL = 'SELECT * FROM Fics;'
+const GET_BOOKS_TABLE_SQL = 'SELECT * FROM Books;'
+const GET_MOVIES_TABLE_SQL = 'SELECT * FROM Movies;'
+const GET_SHOWS_TABLE_SQL = 'SELECT * FROM Shows;'
 
-const GET_FIC_ENTRY_SQL = 'SELECT * FROM Fics WHERE id = ?;'
-const GET_BOOK_ENTRY_SQL = 'SELECT * FROM Books WHERE id = ?;'
-const GET_MOVIE_ENTRY_SQL = 'SELECT * FROM Movies WHERE id = ?;'
-const GET_SHOW_ENTRY_SQL = 'SELECT * FROM Shows WHERE id = ?;'
+const GET_FIC_SQL = 'SELECT * FROM Fics WHERE id = ?;'
+const GET_BOOK_SQL = 'SELECT * FROM Books WHERE id = ?;'
+const GET_MOVIE_SQL = 'SELECT * FROM Movies WHERE id = ?;'
+const GET_SHOW_SQL = 'SELECT * FROM Shows WHERE id = ?;'
 
-const DEL_FIC_ENTRY_SQL = 'DELETE FROM Fics WHERE id = ?;'
-const DEL_BOOK_ENTRY_SQL = 'DELETE FROM Books WHERE id = ?;'
-const DEL_MOVIE_ENTRY_SQL = 'DELETE FROM Movies WHERE id = ?;'
-const DEL_SHOW_ENTRY_SQL = 'DELETE FROM Shows WHERE id = ?;'
+const DEL_FIC_SQL = 'DELETE FROM Fics WHERE id = ?;'
+const DEL_BOOK_SQL = 'DELETE FROM Books WHERE id = ?;'
+const DEL_MOVIE_SQL = 'DELETE FROM Movies WHERE id = ?;'
+const DEL_SHOW_SQL = 'DELETE FROM Shows WHERE id = ?;'
 
 /*
 const GET_LAST_FIC_SQL = 'SELECT * FROM Fics WHERE id = (SELECT MAX(id) FROM Fics);'
@@ -38,6 +38,11 @@ const ADD_FIC_SQL = 'INSERT INTO Fics(title, author, fandoms, wordcount, comment
 const ADD_BOOK_SQL = 'INSERT INTO Books(title, author, genre, comments) VALUES (?, ?, ?, ?) RETURNING id;'
 const ADD_MOVIE_SQL = 'INSERT INTO Movies(title, genre, comments) VALUES (?, ?, ?) RETURNING id;'
 const ADD_SHOW_SQL = 'INSERT INTO Shows(title, genre, comments) VALUES (?, ?, ?) RETURNING id;'
+
+const EDIT_FIC_SQL = 'UPDATE Fics SET title=?, author=?, fandoms=?, wordcount=?, comments=?, link=? WHERE id=?;'
+const EDIT_BOOK_SQL = 'UPDATE Books SET title=?, author=?, genre=?, comments=? WHERE id=?;'
+const EDIT_MOVIE_SQL = 'UPDATE Movies SET title=?, genre=?, comments=? WHERE id=?;'
+const EDIT_SHOW_SQL = 'UPDATE Shows SET title=?, genre=?, comments=? WHERE id=?;'
 
 const db = await open({
     filename: "./media.db",
@@ -62,19 +67,19 @@ app.get('/api/media', async (req, res) => {
     try {
         switch(table) {
         case "Fics":
-            var ret = await db.all(GET_FIC_SQL);
+            var ret = await db.all(GET_FICS_TABLE_SQL);
             res.status(200).send(ret);
             break;
         case "Books":
-            var ret = await db.all(GET_BOOK_SQL);
+            var ret = await db.all(GET_BOOKS_TABLE_SQL);
             res.status(200).send(ret);
             break;
         case "Movies":
-            var ret = await db.all(GET_MOVIE_SQL);
+            var ret = await db.all(GET_MOVIES_TABLE_SQL);
             res.status(200).send(ret);
             break;
         case "Shows":
-            var ret = await db.all(GET_SHOW_SQL);
+            var ret = await db.all(GET_SHOWS_TABLE_SQL);
             res.status(200).send(ret);
             break;
         default:
@@ -99,9 +104,9 @@ app.delete('/api/media', async (req, res) => {
     try {
         switch(table) {
         case "Fics":
-            var d = await db.get(GET_FIC_ENTRY_SQL, entryID)
+            var d = await db.get(GET_FIC_SQL, entryID)
             if (d) {
-                await db.run(DEL_FIC_ENTRY_SQL, entryID);
+                await db.run(DEL_FIC_SQL, entryID);
                 res.status(200).send({
                     "msg": "Successfully deleted entry!"
                 })
@@ -112,9 +117,9 @@ app.delete('/api/media', async (req, res) => {
             }
             break;
         case "Books":
-            var d = await db.get(GET_BOOK_ENTRY_SQL, entryID)
+            var d = await db.get(GET_BOOK_SQL, entryID)
             if (d) {
-                await db.run(DEL_BOOK_ENTRY_SQL, entryID);
+                await db.run(DEL_BOOK_SQL, entryID);
                 res.status(200).send({
                     "msg": "Successfully deleted entry!"
                 })
@@ -125,9 +130,9 @@ app.delete('/api/media', async (req, res) => {
             }
             break;
         case "Movies":
-            var d = await db.get(GET_MOVIE_ENTRY_SQL, entryID)
+            var d = await db.get(GET_MOVIE_SQL, entryID)
             if (d) {
-                await db.run(DEL_MOVIE_ENTRY_SQL, entryID);
+                await db.run(DEL_MOVIE_SQL, entryID);
                 res.status(200).send({
                     "msg": "Successfully deleted entry!"
                 })
@@ -138,9 +143,9 @@ app.delete('/api/media', async (req, res) => {
             }
             break;
         case "Shows":
-            var d = await db.get(GET_SHOW_ENTRY_SQL, entryID)
+            var d = await db.get(GET_SHOW_SQL, entryID)
             if (d) {
-                await db.run(DEL_SHOW_ENTRY_SQL, entryID);
+                await db.run(DEL_SHOW_SQL, entryID);
                 res.status(200).send({
                     "msg": "Successfully deleted entry!"
                 })
@@ -252,8 +257,78 @@ app.post('/api/media', async (req, res) => {
     }
 });
 
-// TODO: EDIT ENTRY
+// EDIT ENTRY
+app.put('/api/media', async (req, res) => {
+    const table = req.query.type;
+    const entry = req.body.entry;
 
+    try {
+        switch(table) {
+        case "Fics":
+            var d = await db.get(GET_FIC_SQL, entry.id)
+            if (d) {
+                await db.run(EDIT_FIC_SQL, entry.title, entry.author, entry.fandoms, entry.wordcount, entry.comments, entry.link, entry.id);
+                res.status(200).send({
+                    "msg": "Successfully edited entry!"
+                })
+            } else {
+                res.status(404).send({
+                    "msg": "That entry was not found!"
+                })
+            }
+            break;
+        case "Books":
+            var d = await db.get(GET_BOOK_SQL, entry.id)
+            if (d) {
+                await db.run(EDIT_BOOK_SQL, entry.title, entry.author, entry.genre, entry.comments, entry.id);
+                res.status(200).send({
+                    "msg": "Successfully edited entry!"
+                })
+            } else {
+                res.status(404).send({
+                    "msg": "That entry was not found!"
+                })
+            }
+            break;
+        case "Movies":
+            var d = await db.get(GET_MOVIE_SQL, entry.id)
+            if (d) {
+                await db.run(EDIT_MOVIE_SQL, entry.title, entry.genre, entry.comments, entry.id);
+                res.status(200).send({
+                    "msg": "Successfully edited entry!"
+                })
+            } else {
+                res.status(404).send({
+                    "msg": "That entry was not found!"
+                })
+            }
+            break;
+        case "Shows":
+            var d = await db.get(GET_SHOW_SQL, entry.id)
+            if (d) {
+                await db.run(EDIT_SHOW_SQL, entry.title, entry.genre, entry.comments, entry.id);
+                res.status(200).send({
+                    "msg": "Successfully edited entry!"
+                })
+            } else {
+                res.status(404).send({
+                    "msg": "That entry was not found!"
+                })
+            }
+            break;
+        default:
+            res.status(404).send({
+                "msg": "That table was not found!"
+            });
+        } 
+    } catch (e) {
+        console.error(e);
+        res.status(500).send({
+            msg: "Something went wrong!"
+        })
+    }
+
+});
 
 
 applyErrorCatching(app);

@@ -84,6 +84,13 @@ a:hover {
 
 
 
+.form-control.is-valid {
+    background-image: none;
+    border-color: gray;
+}
+
+
+
 /*
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

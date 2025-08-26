@@ -24,20 +24,24 @@ const EditModal = (props) => {
     }
     
     useEffect(() => { // load activeEntry into entry
-        if(props.show) setEntry(activeEntry);
-        else resetEntry();
+        resetEntry();
         setValidated(false);
+        if(props.show) setEntry(activeEntry); 
     }, [props.show]);
 
     const handleChange = ({ target }) =>
         setEntry({...entry, [target.id]: target.value});
 
     const handleSubmit = (e) => {
+
         setValidated(true);
+        e.preventDefault();
+
         const form = e.target;
-        if (form.checkValidity() === true) {
-           props.confirm(entry);
-        }
+        if (form.checkValidity() === true) 
+            props.confirm(entry);
+        else
+            e.stopPropagation();
     };
 
     // SET UP FORMS W/ PRE-LOADED CONTENTS FROM ENTRY
@@ -49,11 +53,11 @@ const EditModal = (props) => {
                     placeholder="Enter title"
                     aria-label="Enter title"
                     onChange={handleChange}
-                    value={entry.title}
+                    value={entry.title ?? ""}
                     required
                 />
                 <Form.Control.Feedback type="invalid">
-                    A title is required for the entry.
+                    A title is required.
                 </Form.Control.Feedback>
             </InputGroup>
         </Form.Group>
@@ -66,7 +70,7 @@ const EditModal = (props) => {
                     placeholder="Enter author"
                     aria-label="Enter author"
                     onChange={handleChange}
-                    value={entry.author}
+                    value={entry.author ?? ""}
                 />
             </Form.Group>
         );
@@ -79,30 +83,40 @@ const EditModal = (props) => {
                     placeholder="Enter fandoms (separated by commas)"
                     aria-label="Enter fandoms (separated by commas)"
                     onChange={handleChange}
-                    value={entry.fandoms}
+                    value={entry.fandoms ?? ""}
                 />
             </Form.Group>,
 
             <Form.Group controlId="wordcount" key="wordcount">
                 <Form.Label>Wordcount</Form.Label>
-                <Form.Control
-                    placeholder="Enter wordcount"
-                    aria-label="Enter wordcount"
-                    onChange={handleChange}
-                    type="number"
-                    value={entry.wordcount}
-                />
+                <InputGroup hasValidation>
+                    <Form.Control
+                        placeholder="Enter wordcount"
+                        aria-label="Enter wordcount"
+                        onChange={handleChange}
+                        type="number" min="0"
+                        value={entry.wordcount ?? ""}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        Must be a non-negative whole number.
+                    </Form.Control.Feedback>
+                </InputGroup>
             </Form.Group>,
 
             <Form.Group controlId="link" key="link">
                 <Form.Label>Link</Form.Label>
-                <Form.Control
-                    placeholder="Enter link"
-                    aria-label="Enter link"
-                    onChange={handleChange}
-                    type="url"
-                    value={entry.link}
-                />
+                <InputGroup hasValidation>
+                    <Form.Control
+                        placeholder="Enter link"
+                        aria-label="Enter link"
+                        onChange={handleChange}
+                        type="url"
+                        value={entry.link ?? ""}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        Must be a URL.
+                    </Form.Control.Feedback>
+                </InputGroup>
             </Form.Group>
         );
     }
@@ -114,7 +128,7 @@ const EditModal = (props) => {
                     placeholder="Enter genre(s) (separated by commas)"
                     aria-label="Enter genre(s) (separated by commas)"
                     onChange={handleChange}
-                    value={entry.genre}
+                    value={entry.genre ?? ""}
                 />
             </Form.Group>
         );
@@ -126,7 +140,7 @@ const EditModal = (props) => {
                 placeholder="Enter comments"
                 aria-label="Enter comments"
                 onChange={handleChange}
-                value={entry.comments}
+                value={entry.comments ?? ""}
             />
         </Form.Group>
     );

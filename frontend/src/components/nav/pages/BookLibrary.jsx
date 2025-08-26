@@ -82,8 +82,22 @@ export default function BookLibrary(props) {
         setShowEditModal(true);
     }
     async function handleEdit(editedEntry) {
-        console.log(editedEntry);
-        handleHideEditModal();
+        const resp = await fetch("http://localhost:53706/api/media?type=Books", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                entry: editedEntry
+            })
+        })
+        if(resp.ok) {
+            handleHideEditModal();
+            load();
+        }
+        else {
+            alert("Something went wrong.")
+        }
     }
 
     // HANDLE ADD MODE (trigger-button is on the Navbar)

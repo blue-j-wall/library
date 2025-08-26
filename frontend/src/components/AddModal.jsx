@@ -11,7 +11,7 @@ const AddModal = (props) => {
 
     useEffect(() => {
         setEntry({
-            id: null, // should be set in [...]Library's handleAdd() function
+            id: null, 
             title: null,
             author: null,
             fandoms: null,
@@ -29,11 +29,13 @@ const AddModal = (props) => {
     const handleSubmit = (e) => {
         
         setValidated(true);
+        e.preventDefault();
 
         const form = e.target;
-        if (form.checkValidity() === true) {
-           props.confirm(entry);
-        }
+        if (form.checkValidity() === true) 
+            props.confirm(entry);
+        else
+            e.stopPropagation();
  
     };
 
@@ -48,7 +50,7 @@ const AddModal = (props) => {
                     required
                 />
                 <Form.Control.Feedback type="invalid">
-                    A title is required for the entry.
+                    A title is required.
                 </Form.Control.Feedback>
             </InputGroup>
         </Form.Group>
@@ -78,22 +80,32 @@ const AddModal = (props) => {
 
             <Form.Group controlId="wordcount" key="wordcount">
                 <Form.Label>Wordcount</Form.Label>
-                <Form.Control
-                    placeholder="Enter wordcount"
-                    aria-label="Enter wordcount"
-                    onChange={handleChange}
-                    type="number"
-                />
+                <InputGroup hasValidation>
+                    <Form.Control
+                        placeholder="Enter wordcount"
+                        aria-label="Enter wordcount"
+                        onChange={handleChange}
+                        type="number" min="0"
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        Must be a non-negative whole number.
+                    </Form.Control.Feedback>
+                </InputGroup>
             </Form.Group>,
 
             <Form.Group controlId="link" key="link">
                 <Form.Label>Link</Form.Label>
-                <Form.Control
-                    placeholder="Enter link"
-                    aria-label="Enter link"
-                    onChange={handleChange}
-                    type="url"
-                />
+                <InputGroup hasValidation>
+                    <Form.Control
+                        placeholder="Enter link"
+                        aria-label="Enter link"
+                        onChange={handleChange}
+                        type="url"
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        Must be a URL.
+                    </Form.Control.Feedback>
+                </InputGroup>
             </Form.Group>
         );
     }
