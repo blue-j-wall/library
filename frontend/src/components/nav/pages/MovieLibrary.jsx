@@ -1,6 +1,8 @@
 import { useEffect, useState, useContext } from 'react'
 import { Container, Row, Col, Pagination, Modal, Button } from 'react-bootstrap'
 
+import useBreakpoint from 'use-breakpoint';
+
 import MediaCard from "../../MediaCard.jsx";
 import MediaRow from "../../MediaRow.jsx";
 import DeleteModal from '../../DeleteModal.jsx';
@@ -15,6 +17,8 @@ export default function MovieLibrary(props) {
     const [media, setMedia] = useState([])
     const [filteredMedia, setFilteredMedia] = useState([]);
     const [page, setPage] = useState(1);
+    const [cardCols, setCardCols] = useState([]);
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -188,37 +192,114 @@ export default function MovieLibrary(props) {
         }
     }
 
+    // RESPONSIVE TUMBLR-STYLE COLUMN BEHAVIOR
+    const BREAKPOINTS = { 1: 0, 2: 576, 3: 768, 4: 992, 5: 1200, 6: 1400 } // xs, sm, md, lg, xl, xxl
+    const { breakpoint, maxWidth, minWidth } = useBreakpoint(BREAKPOINTS)
+    function includeInCol(id, colNum) {
+        let include = false;
+        /*
+            xl              lg              md              sm
+            col1 id%4===1   col1 id%3===1   col1 id%3===1   col1 true
+            col2 id%4===2   col2 id%3===2   col2 id%3===0   col2 false
+            col3 id%4===3   col3 id%3===0   col3 false      col3 false
+            col4 id%4===0   col4 false      col4 false      col4 false        
+        */
+        if(breakpoint >= 5) {
+            switch(colNum) {
+                case 1:
+                    include = (id%4===1);
+                    break;
+                case 2:
+                    include = (id%4===2);
+                    break;
+                case 3:
+                    include = (id%4===3);
+                    break;
+                case 4:
+                    include = (id%4===0);
+                    break;
+            }
+        }
+        else if(breakpoint == 4) {
+            switch(colNum) {
+                case 1:
+                    include = (id%3===1);
+                    break;
+                case 2:
+                    include = (id%3===2);
+                    break;
+                case 3:
+                    include = (id%3===0);
+                    break;
+            }
+        }
+        else if(breakpoint == 3) {
+            switch(colNum) {
+                case 1:
+                    include = (id%2===1);
+                    break;
+                case 2:
+                    include = (id%2===0);
+                    break;
+            }
+        }
+        else if(breakpoint <= 2) {
+            if(colNum === 1) include = true;
+        }
+        else {
+            console.log("breakpoint column error");
+        } 
+
+        return include;
+    }
+
+    const loadCols = () => {
+        let numCols = 0;
+        if(breakpoint >= 5) numCols = 4;
+        else if(breakpoint == 4) numCols = 3;
+        else if(breakpoint == 3) numCols = 2;
+        else if(breakpoint <= 2) numCols = 1;
+        else console.log("breakpoint column error");
+
+        let cols = [];
+
+        for (let i=1; i<=numCols; i++) {
+            cols.push(
+                <Col key={i} xs={12} sm={12} md={6} lg={4} xl={3}>
+                    {filteredMedia.slice(((page) - 1) * numPages, page * numPages).filter((m, index) => includeInCol(index+1, i)).map(m => 
+                        <MediaCard key={m.id} {...m} delete={handleShowDeleteModal} edit={handleShowEditModal}/>
+                    )}
+                </Col>
+            );
+        }
+
+        setCardCols(cols);
+    }
+    useEffect(() => {
+        loadCols();
+    }, [breakpoint, page, filteredMedia]);
+
     return <>
         <Container>
         {
             media[0] ? 
             <Row>
-                {
-                    modes.cardMode ? <>{
+                { 
+                    modes.cardMode ? <>{ cardCols }</> : 
+                    <>{
                         filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
-                        <Col key={m.id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                            <MediaCard {...m} delete={handleShowDeleteModal} edit={handleShowEditModal}/>
-                        </Col>
-                    )}</> : <>
-                    {/* // header - loads before the list
-                        <Col xl={12}><Row>
-                            <Col xs={3}><strong>Title</strong></Col>
-                            <Col xs={3}><strong>Genre</strong></Col>
-                            <Col xs={4}><strong>Comments</strong></Col>
-                        </Row></Col>
-                    */}
-                    {
-                        filteredMedia.slice(((page) - 1) * numPages, page * numPages).map(m => 
-                        <Col key={m.id} xl={12}>
+                        <Col key={m.id} xs={12}>
                             <MediaRow {...m} delete={handleShowDeleteModal} edit={handleShowEditModal}/>
-                        </Col>
-                    )}</>
+                        </Col>)
+                    }</>
                 }
             </Row> :
             <h1 className="no-entries-message">No movies to display!</h1>
         }
         </Container>
-        { pages.length>1 ? <><br/><Pagination> {pages} </Pagination></> : <></> }
+        { pages.length>1 ? <div className="footer d-flex justify-content-end">
+            <Pagination> {pages} </Pagination>
+        </div> : <></> }
 
 
         <DeleteModal show={showDeleteModal} hide={handleHideDeleteModal} confirm={handleDelete} title={activeEntry.title}/>

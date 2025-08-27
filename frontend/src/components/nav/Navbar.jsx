@@ -3,7 +3,7 @@ import { Container, Nav, Navbar, Form, ListGroup, DropdownButton, Dropdown, Butt
 import { Link, useLocation } from "react-router-dom";
 
 import { IoOptions, IoGridOutline } from "react-icons/io5";
-import { FaEdit, FaList } from "react-icons/fa";
+import { FaEdit, FaList, FaBook } from "react-icons/fa";
 import { MdLibraryAdd } from "react-icons/md";
 import useBreakpoint from 'use-breakpoint';
 
@@ -11,6 +11,8 @@ import SearchContext from '../../contexts/SearchContext';
 import ModeContext from '../../contexts/ModeContext';
 
 export default function PageNavbar(props) {
+
+    let location = useLocation();
 
     const { params, setParams } = useContext(SearchContext);
     const { modes, setModes } = useContext(ModeContext);
@@ -29,21 +31,18 @@ export default function PageNavbar(props) {
     const BREAKPOINTS = { 1: 0, 2: 576, 3: 768, 4: 992, 5: 1200, 6: 1400 } // xs, sm, md, lg, xl, xxl
     const { breakpoint, maxWidth, minWidth } = useBreakpoint(BREAKPOINTS)
     useEffect(() => {
-        if(breakpoint > 2) {
-            setExpanded(false); 
-            setSearchVisibile("visible"); 
-        }
-        else if(expanded) {
+        if((breakpoint <= 2 && expanded) || location.pathname==="/") { // narrow screen + menu open OR on home page
             setSearchVisibile("hidden");
         }
-        else {
+        else { // wide screen, narrow screen + menu closed, not on home page
+            setExpanded(false); // ISSUE: causes navbar to 'scrunch' when resizing window w/ menu open
             setSearchVisibile("visible");
         }
-    }, [breakpoint, expanded]);
+    }, [breakpoint, expanded, location.pathname]);
 
     // CHECKBOX STUFF 
     let checkboxes = ["title"]
-    let location = useLocation();
+    
     if (location.pathname == "/fics") {
         checkboxes.push("author");
         checkboxes.push("fandoms");
@@ -121,24 +120,15 @@ export default function PageNavbar(props) {
 
     return <Navbar 
         id="library-navbar"
-        bg="dark" data-bs-theme="dark" 
         fixed="top" expand={expandBreakpoint} collapseOnSelect
         expanded={expanded}
         onToggle={() => {setExpanded(!expanded)}}
     >
-        <Container>
+        <Container id="nav-container">
             <Navbar.Toggle aria-controls="responsive-navbar-group" />
             
             <Navbar.Brand>
-                {/*
-                <img
-                    alt="book stack emoji"
-                    src="https://em-content.zobj.net/source/apple/419/books_1f4da.png"
-                    width="30"
-                    height="30"
-                    className="d-inline-block align-top"
-                />{' '}*/}
-                The Library
+                <FaBook/>{' '}The Library
             </Navbar.Brand>
             
             <Navbar.Collapse id="responsive-navbar-group">
@@ -150,7 +140,7 @@ export default function PageNavbar(props) {
                     <Nav.Link as={Link} to="/shows" href="/shows">Shows</Nav.Link>
                 </Nav>
 
-                <Nav className="d-flex ms-auto justify-content-end">
+                <Nav className="d-flex ms-auto justify-content-end" style={{visibility:`${location.pathname !== "/" ? "visible" : "hidden"}`}}>
                     <ListGroup id="nav-icons" className="d-flex justify-content-start" horizontal>
                         <ListGroup.Item ><a id="cardMode" className="d-flex" onClick={() => setModes({...modes, cardMode: !modes.cardMode})}> 
                             {modes.cardMode ? <IoGridOutline/> : <FaList/>} </a></ListGroup.Item>
@@ -159,10 +149,10 @@ export default function PageNavbar(props) {
                         <ListGroup.Item ><a id="addMode" className="d-flex" onClick={() => setModes({...modes, addMode: true})}>
                             <MdLibraryAdd/> </a></ListGroup.Item>
                     </ListGroup>
-                </Nav>
+                </Nav> 
             </Navbar.Collapse>
-
-            <Form id="search-form" className="d-flex" style={{visibility:`${searchVisibile}`}}> {/**/}
+            
+            <Form id="search-form" className="d-flex" style={{visibility:`${searchVisibile}`}}> 
                 <Form.Control
                     id="search-bar"
                     type="search"
@@ -190,7 +180,7 @@ export default function PageNavbar(props) {
                         { ficOnly }
                     </Container>
                 </DropdownButton>
-            </Form> 
+            </Form>
             
         </Container>
     </Navbar>

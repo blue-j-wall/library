@@ -32,7 +32,8 @@ const MediaCard = (props) => {
     return <Card className="media-card">
         <ListGroup variant="flush">
             <ListGroup.Item>
-                <Card.Title>{props.title}</Card.Title>
+                <Card.Title></Card.Title>
+                { props.link ? <Card.Title><a href={props.link} target="_blank">{props.title}</a></Card.Title> : <Card.Title>{props.title}</Card.Title> }
                 { props.author ? <Card.Subtitle>{props.author}</Card.Subtitle> : <></> }
             </ListGroup.Item>
             { props.genre ? <ListGroup.Item>{props.genre}</ListGroup.Item> : <></> }
