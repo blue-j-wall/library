@@ -96,16 +96,16 @@ export default function PageNavbar(props) {
                 <p>Wordcount range:</p>
                 <Form.Control 
                     id="lowerbound-wordcount"
-                    placeholder="lower bound"
-                    aria-label="lower bound"
+                    placeholder="min"
+                    aria-label="min"
                     type="number"
                     value={params.lowerBound}
                     onChange={(e) => setParams({...params, lowerBound: e.target.value})}
                 />
                 <Form.Control 
                     id="upperbound-wordcount"
-                    placeholder="upper bound"
-                    aria-label="upper bound"
+                    placeholder="max"
+                    aria-label="max"
                     type="number"
                     value={params.upperBound}
                     onChange={(e) => setParams({...params, upperBound: e.target.value})}

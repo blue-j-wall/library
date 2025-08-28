@@ -18,7 +18,7 @@ export default function FicLibrary(props) {
     const [filteredMedia, setFilteredMedia] = useState([]);
     const [page, setPage] = useState(1);
     const [cardCols, setCardCols] = useState([]);
-    
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -135,50 +135,56 @@ export default function FicLibrary(props) {
     // SEARCH
     useEffect(() => {
 
-        //console.log(params);
-
         setPage(1);
 
         let paramList = params.search.split(/(\s+)/).filter(p => p !== " " && p !== "")
         let filteredLists = [] // array of arrays
 
-        let radioFilter = media; // single/multichap filtering
+        // single/multichap filtering (only works w/ ao3 links)
+        let radioFilter = media; 
         if(params.chapterRadio == "multi") { 
             radioFilter = media.filter(m => `${m.link?.toLowerCase()}`.includes("chapter"));
         }
         else if(params.chapterRadio == "single") {
-            radioFilter = media.filter(m => !`${m.link?.toLowerCase()}`.includes("chapter"));
+            radioFilter = media.filter(m => `${m.link?.toLowerCase()}`.includes("archiveofourown") 
+                                                && !`${m.link?.toLowerCase()}`.includes("chapter"));
         }
 
-        let wcFilter = radioFilter // wordcount range filter
-        let min = params.lowerBound ? parseInt(params.lowerBound) : 0
-        let max = params.upperBound ? parseInt(params.upperBound) : Number.MAX_VALUE-1
-        // if min > max --> simply do not filter
+        // wordcount range filtering
+        let wcFilter = radioFilter;
+        let min = Number.MAX_VALUE-1;
+        let max = 0;
+        if(params.lowerBound || params.upperBound) {
+            min = params.lowerBound ? parseInt(params.lowerBound) : 0;
+            max = params.upperBound ? parseInt(params.upperBound) : Number.MAX_VALUE-1;
+        }
+        // if min > max (no or ill-formatted input) --> simply do not filter
         if(min <= max) {
             wcFilter = radioFilter.filter(m => (m.wordcount ?? min-1) >= min && (m.wordcount ?? max+1) <= max);
         }
         
+        // search bar params filtering
         if(paramList.length > 0) {
             for(let param of paramList) {
 
                 let filterTitle = []
                 if(params.title) {
-                    filterTitle = wcFilter.filter(m => `${m.title.toLowerCase()}`.includes(param));
+                    filterTitle = wcFilter.filter(m => `${m.title.toLowerCase()}`.includes(param.toLowerCase()));
                 }
                  
                 let filterAuthor = []
                 if(params.author) { // have to account for this eventually being an array; flatten to string
-                    filterAuthor = wcFilter.filter(m => `${m.author?.toLowerCase()}`.includes(param));
+                    filterAuthor = wcFilter.filter(m => `${m.author?.toLowerCase()}`.includes(param.toLowerCase()));
                 }
 
                 let filterFandoms = []
                 if(params.fandoms) { // have to account for this eventually being an array
-                    filterFandoms = wcFilter.filter(m => `${m.fandoms?.toLowerCase()}`.includes(param)); 
+                    filterFandoms = wcFilter.filter(m => `${m.fandoms?.toLowerCase()}`.includes(param.toLowerCase())); 
                 }
 
                 let filterComments = []
                 if(params.comments) {
-                    filterComments = wcFilter.filter(m => m.comments != null).filter(m => `${m.comments?.toLowerCase()}`.includes(param));
+                    filterComments = wcFilter.filter(m => m.comments != null).filter(m => `${m.comments?.toLowerCase()}`.includes(param.toLowerCase()));
                 } 
                     
                 filteredLists.push([...new Set([...filterTitle, ...filterAuthor, ...filterFandoms, ...filterComments])]); // OR
