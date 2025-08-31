@@ -3,7 +3,7 @@ import { Container, Nav, Navbar, Form, ListGroup, DropdownButton, Dropdown, Butt
 import { Link, useLocation } from "react-router-dom";
 
 import { IoOptions, IoGridOutline } from "react-icons/io5";
-import { FaEdit, FaList, FaBook } from "react-icons/fa";
+import { FaEdit, FaList, FaBookReader } from "react-icons/fa";
 import { MdLibraryAdd } from "react-icons/md";
 import useBreakpoint from 'use-breakpoint';
 
@@ -16,29 +16,6 @@ export default function PageNavbar(props) {
 
     const { params, setParams } = useContext(SearchContext);
     const { modes, setModes } = useContext(ModeContext);
-
-    // HANDLE EDIT TOGGLE
-    const handleEditToggle = () => {
-        setModes({...modes, editMode: !modes.editMode});
-        var element = document.getElementById("root");
-        element.classList.toggle("active");
-    }
-
-    // HIDING SEARCHBAR IN MENU
-    const [expanded, setExpanded] = useState(false);
-    const [searchVisibile, setSearchVisibile] = useState("visible");
-    const expandBreakpoint = "md"; // standard navbar md+, collapses at sm
-    const BREAKPOINTS = { 1: 0, 2: 576, 3: 768, 4: 992, 5: 1200, 6: 1400 } // xs, sm, md, lg, xl, xxl
-    const { breakpoint, maxWidth, minWidth } = useBreakpoint(BREAKPOINTS)
-    useEffect(() => {
-        if((breakpoint <= 2 && expanded) || location.pathname==="/") { // narrow screen + menu open OR on home page
-            setSearchVisibile("hidden");
-        }
-        else { // wide screen, narrow screen + menu closed, not on home page
-            setExpanded(false); // ISSUE: causes navbar to 'scrunch' when resizing window w/ menu open
-            setSearchVisibile("visible");
-        }
-    }, [breakpoint, expanded, location.pathname]);
 
     // CHECKBOX STUFF 
     let checkboxes = ["title"]
@@ -114,6 +91,47 @@ export default function PageNavbar(props) {
         )
     }
 
+    // CLICKING BOOK TOGGLES .ACTIVE FOR HOME NAV (also occurs on page load)
+    useEffect(() => {
+        handleBookClick();
+    }, [])
+    const handleBookClick = () => {
+        let element = document.getElementById("page-brand");
+        element.click();
+    }
+
+    // HANDLE EDIT TOGGLE
+    const handleEditToggle = () => {
+        setModes({...modes, editMode: !modes.editMode});
+        let element = document.getElementById("root");
+        element.classList.toggle("active");
+    }
+
+    // HIDING SEARCHBAR IN MENU
+    const [expanded, setExpanded] = useState(false);
+    const [searchVisible, setSearchVisible] = useState(true);
+    const [cardModeVisible, setCardModeVisible] = useState(true);
+    const expandBreakpoint = "md"; // standard navbar md+, collapses at sm
+    const BREAKPOINTS = { 1: 0, 2: 576, 3: 768, 4: 992, 5: 1200, 6: 1400 } // xs, sm, md, lg, xl, xxl
+    const { breakpoint, maxWidth, minWidth } = useBreakpoint(BREAKPOINTS)
+    useEffect(() => {
+        if((breakpoint <= 2 && expanded) || location.pathname==="/") { // narrow screen + menu open OR on home page
+            setSearchVisible(false);
+        }
+        else { // wide screen, narrow screen + menu closed, not on home page
+            setExpanded(false); // ISSUE: causes navbar to 'scrunch' when resizing window w/ menu open
+            setSearchVisible(true);
+        }
+
+        if(breakpoint <= 2) {
+            setCardModeVisible(false);
+            setModes({...modes, cardMode: true});
+        }
+        else {
+            setCardModeVisible(true);
+        }
+    }, [breakpoint, expanded, location.pathname]);
+
 
     // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -127,32 +145,31 @@ export default function PageNavbar(props) {
         <Container id="nav-container">
             <Navbar.Toggle aria-controls="responsive-navbar-group" />
             
-            <Navbar.Brand>
-                <FaBook/>{' '}The Library
-            </Navbar.Brand>
+            <Navbar.Brand id="book-brand" as={Link} to="/" href="/" onClick={handleBookClick}><FaBookReader/></Navbar.Brand>
             
             <Navbar.Collapse id="responsive-navbar-group">
                 <Nav>
-                    <Nav.Link as={Link} to="/" href="/">Home</Nav.Link>
-                    <Nav.Link as={Link} to="/fics" href="/fics">Fanfics</Nav.Link>
-                    <Nav.Link as={Link} to="/books" href="/books">Books</Nav.Link>
-                    <Nav.Link as={Link} to="/movies" href="/movies">Movies</Nav.Link>
-                    <Nav.Link as={Link} to="/shows" href="/shows">Shows</Nav.Link>
+                    <Nav.Link id="page-brand" className="navbar-brand navbar-tab navbar-item" as={Link} to="/" href="/">The Library</Nav.Link>
+                    <Nav.Link className="navbar-tab navbar-item" as={Link} to="/fics" href="/fics">Fanfics</Nav.Link>
+                    <Nav.Link className="navbar-tab navbar-item" as={Link} to="/books" href="/books">Books</Nav.Link>
+                    <Nav.Link className="navbar-tab navbar-item" as={Link} to="/movies" href="/movies">Movies</Nav.Link>
+                    <Nav.Link className="navbar-tab navbar-item" as={Link} to="/shows" href="/shows">Shows</Nav.Link>
                 </Nav>
-
-                <Nav className="d-flex ms-auto justify-content-end" style={{visibility:`${location.pathname !== "/" ? "visible" : "hidden"}`}}>
-                    <ListGroup id="nav-icons" className="d-flex justify-content-start" horizontal>
-                        <ListGroup.Item ><a id="cardMode" className="d-flex" onClick={() => setModes({...modes, cardMode: !modes.cardMode})}> 
-                            {modes.cardMode ? <IoGridOutline/> : <FaList/>} </a></ListGroup.Item>
-                        <ListGroup.Item ><a id="editMode" className="d-flex" onClick={handleEditToggle}>
-                            <FaEdit/> </a></ListGroup.Item>
-                        <ListGroup.Item ><a id="addMode" className="d-flex" onClick={() => setModes({...modes, addMode: true})}>
-                            <MdLibraryAdd/> </a></ListGroup.Item>
-                    </ListGroup>
-                </Nav> 
             </Navbar.Collapse>
+
+            <Nav className="d-flex ms-auto justify-content-end" style={{visibility:`${(location.pathname !== "/" && searchVisible) ? "visible" : "hidden"}`}}>
+                <ListGroup id="nav-icons" className="d-flex justify-content-start" horizontal>
+                    { searchVisible && cardModeVisible ? 
+                    <ListGroup.Item ><a id="cardMode" className="navbar-item d-flex" onClick={() => setModes({...modes, cardMode: !modes.cardMode})}>
+                        {modes.cardMode ? <IoGridOutline/> : <FaList/>} </a></ListGroup.Item> : <></> }
+                    <ListGroup.Item ><a id="editMode" className="navbar-item d-flex" onClick={handleEditToggle}>
+                        <FaEdit/> </a></ListGroup.Item>
+                    <ListGroup.Item ><a id="addMode" className="navbar-item d-flex" onClick={() => setModes({...modes, addMode: true})}>
+                        <MdLibraryAdd/> </a></ListGroup.Item>
+                </ListGroup>
+            </Nav> 
             
-            <Form id="search-form" className="d-flex" style={{visibility:`${searchVisibile}`}}> 
+            <Form id="search-form" className="d-flex" style={{visibility:`${searchVisible ? "visible" : "hidden"}`}}> 
                 <Form.Control
                     id="search-bar"
                     type="search"
@@ -162,7 +179,8 @@ export default function PageNavbar(props) {
                     value={params.search}
                     onChange={(e) => setParams({...params, search: e.target.value})}
                 />
-                <DropdownButton id="search-dropdown" title={<IoOptions id="search-options"/>} variant="outline-dark" size="lg" drop="start">
+                <DropdownButton id="search-dropdown" className="d-flex align-items-center" drop="start"
+                    title={<IoOptions className="d-flex align-self-center"/>} size="lg">
                     <Container>
                         <p>Fields to search:</p>
                         {

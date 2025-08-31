@@ -31,10 +31,11 @@ const MediaRow = (props) => {
     }
 
 
-    let cols = [<Col key="title" xs={3}>{props.title}</Col>]
+    
+    let cols = [<Col key="title" xs={2}>{props.title}</Col>]
     let location = useLocation();
     if (location.pathname == "/fics") { 
-        cols.push(<Col key="author" xs={1}>{props.author}</Col>);
+        cols.push(<Col key="author" xs={2}>{props.author}</Col>);
         cols.push(<Col key="fandoms" xs={1}>{props.fandoms}</Col>);
         cols.push(<Col key="wordcount" xs={1}>{props.wordcount}</Col>);
     }
@@ -45,7 +46,7 @@ const MediaRow = (props) => {
     else if (location.pathname == "/movies" || location.pathname == "/shows") {
         cols.push(props.genre ? <Col key="genre" xs={2}>{props.genre}</Col> : <Col key="genre" xs={2}></Col>);
     }
-    cols.push(props.comments ? <Col key="comments" xs={3}>{props.comments}</Col> : <Col key="comments" xs={3}></Col>);
+    cols.push(props.comments ? <Col key="comments" xs={6}>{props.comments}</Col> : <Col key="comments" xs={3}></Col>);
     cols.push(
         modes.editMode ? (
             <Col key="buttons" xs={2}>
@@ -57,10 +58,9 @@ const MediaRow = (props) => {
         ) : <Col key="null" xs={0}></Col>
     )
 
-    return <Row className="media-row">
+    return <Card className="media-row-outer"><Card className="media-row-inner"><Row>
         { cols }
-    </Row>
-  
+    </Row></Card></Card>
 
 }
 
