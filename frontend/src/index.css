@@ -12,6 +12,7 @@
 #root { /*React's equivalent to <body>*/
   margin: 0 auto;
   padding: 1rem;
+  padding-bottom: 2.5rem;
   background-image: linear-gradient(#87CEEB, #34609b);
 }
 
@@ -39,6 +40,10 @@ a.navbar-item:hover {
 a.navbar-tab.active {
   color: #e8c618 !important;
 }
+#library-navbar{
+  background-color:#1c334e;
+}
+/* brand */
 #book-brand {
   font-size: 1.3em;
   line-height: 0em;
@@ -46,9 +51,6 @@ a.navbar-tab.active {
 }
 #book-brand:hover {
   color: #ffeb84 !important;
-}
-#library-navbar{
-  background-color:#1c334e;
 }
 /* icons */
 #nav-icons {
@@ -84,6 +86,18 @@ a.navbar-tab.active {
 #search-dropdown:hover {
   color: #ffeb84;
 }
+/* hamburger menu */
+#toggle {
+  margin-right: .4rem;
+  border: 0px;
+  color: #1c334e;
+}
+#toggle .navbar-toggler-icon {
+  background-image: url("./assets/hamburger-default.svg");
+}
+#toggle .navbar-toggler-icon:hover {
+  background-image: url("./assets/hamburger-hover.svg");
+}
 
 /* FOOTER */
 div.footer {
@@ -95,24 +109,19 @@ div.footer {
   width: 100%;
 }
 .page-item .page-link {
+  border: 0;
   color: #a4d6e0 !important;
-  background: #1c334e;
-  border-color: #1c334e;
-}
-.page-item.active .page-link {
-  color: #fff !important;
-  background: #1a4d87;
-  border-color: #1a4d87;
+  background: #1c334e !important;
 }
 .page-item .page-link:hover {
   color: #e8c618 !important;
-  background: #1c334e;
-  border-color: #1c334e;
+}
+.page-item.active .page-link {
+  color: #fff !important;
+  background: #1a4d87 !important;
 }
 .page-item.active .page-link:hover {
   color: #e8c618 !important;
-  background: #1a4d87;
-  border-color: #1a4d87;
 }
 
 /* ENTRIES */

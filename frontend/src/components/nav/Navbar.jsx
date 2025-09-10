@@ -143,9 +143,10 @@ export default function PageNavbar(props) {
         onToggle={() => {setExpanded(!expanded)}}
     >
         <Container id="nav-container">
-            <Navbar.Toggle aria-controls="responsive-navbar-group" />
+
+            <Navbar.Toggle id="toggle" aria-controls="responsive-navbar-group" />
             
-            <Navbar.Brand id="book-brand" as={Link} to="/" href="/" onClick={handleBookClick}><FaBookReader/></Navbar.Brand>
+            <Navbar.Brand id="book-brand" className="me-auto" as={Link} to="/" href="/" onClick={handleBookClick}><FaBookReader/></Navbar.Brand>
             
             <Navbar.Collapse id="responsive-navbar-group">
                 <Nav>
