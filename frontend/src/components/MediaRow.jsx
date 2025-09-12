@@ -36,26 +36,26 @@ const MediaRow = (props) => {
     let location = useLocation();
     if (location.pathname == "/fics") { 
         cols.push(<Col key="author" xs={2}>{props.author}</Col>);
-        cols.push(<Col key="fandoms" xs={1}>{props.fandoms}</Col>);
+        cols.push(<Col key="fandoms" xs={2}>{props.fandoms}</Col>);
         cols.push(<Col key="wordcount" xs={1}>{props.wordcount}</Col>);
     }
     else if (location.pathname == "/books") {
-        cols.push(<Col key="author" xs={1}>{props.author}</Col>);
+        cols.push(<Col key="author" xs={2}>{props.author}</Col>);
         cols.push(props.genre ? <Col key="genre" xs={2}>{props.genre}</Col> : <Col key="genre" xs={2}></Col>);
     }
     else if (location.pathname == "/movies" || location.pathname == "/shows") {
         cols.push(props.genre ? <Col key="genre" xs={2}>{props.genre}</Col> : <Col key="genre" xs={2}></Col>);
     }
-    cols.push(props.comments ? <Col key="comments" xs={6}>{props.comments}</Col> : <Col key="comments" xs={3}></Col>);
+    cols.push(props.comments ? <Col key="comments">{props.comments}</Col> : <Col key="comments"></Col>);
     cols.push(
         modes.editMode ? (
-            <Col key="buttons" xs={2}>
-                <div id="card-icons" className="d-flex justify-content-end">
-                    <a onClick={handleEdit}><MdEdit/></a>
-                    <a onClick={handleDelete}><MdDelete/></a>
+            <Col key="buttons" xs={1} className="d-flex justify-content-end align-items-end">
+                <div id="card-icons" class="d-flex"> 
+                    <a class="d-flex align-items-center" onClick={handleEdit}><MdEdit/></a>
+                    <a class="d-flex align-items-center" onClick={handleDelete}><MdDelete/></a>
                 </div>
             </Col>
-        ) : <Col key="null" xs={0}></Col>
+        ) : <Col key="null" xs={1}></Col>
     )
 
     return <Card className="media-row-outer"><Card className="media-row-inner"><Row>
