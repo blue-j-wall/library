@@ -140,7 +140,7 @@ const AddModal = (props) => {
             <Form noValidate validated={validated} onSubmit={handleSubmit} 
                 className="d-flex flex-column"> 
                 { forms }
-                <ButtonGroup className="d-flex flex-row">
+                <ButtonGroup className="modal-options d-flex flex-row">
                     <Button variant="secondary" onClick={props.hide}>Cancel</Button>
                     <Button variant="primary" type="submit">Add</Button>
                 </ButtonGroup>

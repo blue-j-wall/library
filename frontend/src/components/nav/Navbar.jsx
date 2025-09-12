@@ -151,10 +151,10 @@ export default function PageNavbar(props) {
             <Navbar.Collapse id="responsive-navbar-group">
                 <Nav>
                     <Nav.Link id="page-brand" className="navbar-brand navbar-tab navbar-item" as={Link} to="/" href="/">The Library</Nav.Link>
-                    <Nav.Link className="navbar-tab navbar-item" as={Link} to="/fics" href="/fics">Fanfics</Nav.Link>
-                    <Nav.Link className="navbar-tab navbar-item" as={Link} to="/books" href="/books">Books</Nav.Link>
                     <Nav.Link className="navbar-tab navbar-item" as={Link} to="/movies" href="/movies">Movies</Nav.Link>
                     <Nav.Link className="navbar-tab navbar-item" as={Link} to="/shows" href="/shows">Shows</Nav.Link>
+                    <Nav.Link className="navbar-tab navbar-item" as={Link} to="/fics" href="/fics">Fanfics</Nav.Link>
+                    <Nav.Link className="navbar-tab navbar-item" as={Link} to="/books" href="/books">Books</Nav.Link>
                 </Nav>
             </Navbar.Collapse>
 

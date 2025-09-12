@@ -36,12 +36,12 @@ const MediaCard = (props) => {
                     : <Card.Title>{props.title}</Card.Title> }
                 { props.author ? <Card.Subtitle>{props.author}</Card.Subtitle> : <></> }
             </ListGroup.Item>
-            { props.genre ? <ListGroup.Item>{props.genre}</ListGroup.Item> : <></> }
+            { props.genre ? <ListGroup.Item style={{fontSize: '.8em'}}>{props.genre}</ListGroup.Item> : <></> }
             { props.fandoms && props.wordcount ? <ListGroup.Item style={{fontSize: '.8em'}}>
                 <Container className="px-0">
                     <Row>
                         <Col>{props.fandoms}</Col>
-                        <Col style={{textAlign: 'right'}}>{props.wordcount}</Col>
+                        <Col style={{textAlign: 'right'}}>{props.wordcount} words</Col>
                     </Row>
                 </Container>
             </ListGroup.Item> : <></> }

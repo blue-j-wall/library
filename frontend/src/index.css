@@ -25,7 +25,7 @@
 }
 
 h1.no-entries-message {
-  margin-top: 4rem;
+  margin-top: 5rem;
   text-align: center;
   color: rgb(215, 237, 246);
 }
@@ -43,8 +43,13 @@ a.navbar-tab.active {
 #library-navbar{
   background-color:#1c334e;
 }
+#nav-container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
 /* brand */
 #book-brand {
+  padding-right: 1rem;
   font-size: 1.3em;
   line-height: 0em;
   color: #e8c618 !important;
@@ -88,7 +93,8 @@ a.navbar-tab.active {
 }
 /* hamburger menu */
 #toggle {
-  margin-right: .4rem;
+  padding-left: 0;
+  padding-right: 1.3rem;
   border: 0px;
   color: #1c334e;
 }
@@ -131,10 +137,14 @@ div.footer {
   padding: .5rem; /* spacing between card contents and borders */
   background-color: rgba(221, 245, 255, .3) !important;
 }
+.media-card .list-group-item {
+  background-color: #edfbff; /* DUPLICATE */
+  color: #1c334e !important; /* DUPLICATE */
+}
 #card-icons a {
-  padding-left: .2rem;
+  padding-left: .5rem;
   font-size: 1.4em;
-  color: #65a0d7 !important;
+  color: #34619b69 !important; /* #65a0d7 #34609b */
 }
 #card-icons a:hover {
   color: #ffeb84 !important;
@@ -156,8 +166,84 @@ a.link-title:hover {
 .media-row-inner {
   margin: 0;
   padding: .3rem;
-  background-color: #fff;
+  padding-left: .6rem;
+  padding-right: .6rem;
+  background-color: #edfbff !important; /* DUPLICATE */
+  color: #1c334e !important; /* DUPLICATE */
 }
+
+/* MODALS */
+div.modal-content {
+  background-color: #f4feff;
+  color: #1c334e;
+}
+div.modal-content .form-control {
+  margin-bottom: 1rem;
+}
+div.btn-group.modal-options {
+  margin-top: 1rem;
+}
+
+/* LANDING */
+div.card.landing {
+  background-color: #ffffff2b;
+  color: #f4feff;
+}
+
+div.card.landing.welcome {
+  margin-top: 1rem;
+}
+div.card.landing.welcome .card-title {
+  padding: 3rem;
+  border-radius: 25px;
+  outline: 3px solid #87CEEB ;
+  outline-offset: -6px;
+  background-color: #edfbff;
+  font-size: 3em;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  text-align: center;
+  color: #1c334e ; /*  #e8c618 #87CEEB #1c334e #34609b */
+}
+div.card.landing.welcome .card-text {
+  padding: 3rem;
+  margin-right: 10%;
+  font-size: 1.3em;
+}
+
+#landing-break {
+  margin: 2rem;
+  text-align: center;
+  font-size: 1.5em;
+  color: #ffeb84;
+}
+
+div.card.landing.construction {
+  padding: 2rem;
+}
+div.card.landing.construction .card-title {
+  padding: 1rem;
+  border-radius: 25px;
+  outline: 3px solid #e8c618 ;
+  outline-offset: -6px;
+  background-color: #1c334e;
+  font-size: 2em;
+  text-align: center;
+  color: #e8c618 ; 
+}
+div.card.landing.construction .card-subtitle {
+  margin: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.5em;
+}
+div.card.landing.construction .card-text {
+  margin-left: 2.5rem;
+}
+
+/* ALL CARDS */
+div.card {
+  border: 0;
+}
+
 
 
 /*
