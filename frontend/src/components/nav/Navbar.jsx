@@ -96,7 +96,7 @@ export default function PageNavbar(props) {
         handleBookClick();
     }, [])
     const handleBookClick = () => {
-        let element = document.getElementById("page-brand");
+        let element = document.getElementById("text-brand");
         element.click();
     }
 
@@ -150,7 +150,7 @@ export default function PageNavbar(props) {
             
             <Navbar.Collapse id="responsive-navbar-group">
                 <Nav>
-                    <Nav.Link id="page-brand" className="navbar-brand navbar-tab navbar-item" as={Link} to="/" href="/">The Library</Nav.Link>
+                    <Nav.Link id="text-brand" className="navbar-brand navbar-tab navbar-item" as={Link} to="/" href="/">The Library</Nav.Link>
                     <Nav.Link className="navbar-tab navbar-item" as={Link} to="/movies" href="/movies">Movies</Nav.Link>
                     <Nav.Link className="navbar-tab navbar-item" as={Link} to="/shows" href="/shows">Shows</Nav.Link>
                     <Nav.Link className="navbar-tab navbar-item" as={Link} to="/fics" href="/fics">Fanfics</Nav.Link>

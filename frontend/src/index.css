@@ -1,3 +1,9 @@
+@font-face {
+  font-family: bebasFont;
+  src: url('./assets/bebas/Bebas-Regular.otf'),
+       url('./assets/bebas/Bebas-Regular.ttf'); 
+}
+
 :root { /*<html>*/
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -56,6 +62,9 @@ a.navbar-tab.active {
 }
 #book-brand:hover {
   color: #ffeb84 !important;
+}
+#text-brand {
+  font-family: bebasFont;
 }
 /* icons */
 #nav-icons {
@@ -200,7 +209,7 @@ div.card.landing.welcome .card-title {
   outline-offset: -6px;
   background-color: #edfbff;
   font-size: 3em;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: bebasFont;
   text-align: center;
   color: #1c334e ; /*  #e8c618 #87CEEB #1c334e #34609b */
 }
@@ -227,6 +236,7 @@ div.card.landing.construction .card-title {
   outline-offset: -6px;
   background-color: #1c334e;
   font-size: 2em;
+  font-family: bebasFont;
   text-align: center;
   color: #e8c618 ; 
 }
