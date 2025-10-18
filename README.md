@@ -4,6 +4,7 @@ A personal project for me to organize media I've watched/read and practice diffe
 
 ## Document structure
 ```
+[FRONTEND]
 main
 |
 |_Router	
@@ -14,8 +15,15 @@ main
 		|
 		|_Outlet/Route
 			|_Landing
-			|_FicLibrary
-			|_BookLibrary
-			|_MovieLibrary
-			|_ShowLibrary
+			|_FicLibrary*
+			|_BookLibrary*
+			|_MovieLibrary*
+			|_ShowLibrary*
+
+[BACKEND]
+*index.js
+|
+|_api-middleware.js
+|
+|_media.db
 ```
