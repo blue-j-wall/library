@@ -1,5 +1,9 @@
 import { Modal, Button, Form, InputGroup, ButtonGroup } from 'react-bootstrap'
 import { useState, useEffect, useContext } from 'react'
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+
+import * as formik from 'formik';
 
 import ModeContext from '../contexts/ModeContext';
 
@@ -8,8 +12,18 @@ const AddModal = (props) => {
     const { modes, setModes } = useContext(ModeContext);
     const [entry, setEntry] = useState();
     const [validated, setValidated] = useState(false);
+    const [key, setKey] = useState('manual');
+
+    useEffect(() => { // switching between tabs
+        resetEntryAndForms();
+        setValidated(false);
+    }, [modes.addMode, key]);
 
     useEffect(() => {
+        console.log(validated);
+    }, [validated])
+
+    const resetEntryAndForms = () => {
         setEntry({
             id: null, 
             title: null,
@@ -20,23 +34,25 @@ const AddModal = (props) => {
             link: null,
             genre: null
         });
-        setValidated(false);
-    }, [modes.addMode]);
+        let manualForm = document.getElementById("manual-form");
+        let linkForm = document.getElementById("link-form");
+        if(manualForm && linkForm) {
+            manualForm.reset();
+            linkForm.reset();
+        }
+    }
 
     const handleChange = ({ target }) =>
         setEntry({...entry, [target.id]: target.value});
 
     const handleSubmit = (e) => {
-        
         setValidated(true);
         e.preventDefault();
-
         const form = e.target;
         if (form.checkValidity() === true) 
             props.confirm(entry);
-        else
+        else 
             e.stopPropagation();
- 
     };
 
     let forms = [
@@ -137,14 +153,52 @@ const AddModal = (props) => {
             <Modal.Title>Add Entry</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <Form noValidate validated={validated} onSubmit={handleSubmit} 
-                className="d-flex flex-column"> 
-                { forms }
-                <ButtonGroup className="modal-options d-flex flex-row">
-                    <Button variant="secondary" onClick={props.hide}>Cancel</Button>
-                    <Button variant="primary" type="submit">Add</Button>
-                </ButtonGroup>
-            </Form>
+            <Tabs 
+                activeKey={key}
+                onSelect={(k) => setKey(k)}
+                className="mb-3">
+                
+                <Tab eventKey="manual" title="Manually">
+                    <Form id="manual-form" noValidate validated={validated} onSubmit={handleSubmit} 
+                        className="d-flex flex-column"> 
+                        { forms }
+                        <ButtonGroup className="modal-options d-flex flex-row">
+                            <Button variant="secondary" onClick={props.hide}>Cancel</Button>
+                            <Button variant="primary" type="submit">Add</Button>
+                        </ButtonGroup>
+                    </Form>
+                </Tab>
+
+                <Tab eventKey="link" title="By Link">
+                    <Form id="link-form" noValidate validated={validated} onSubmit={handleSubmit} 
+                        className="d-flex flex-column"> 
+                        <Form.Group controlId="link" key="link">
+                            <InputGroup hasValidation>
+                                <Form.Control
+                                    placeholder="Enter link"
+                                    aria-label="Enter link"
+                                    onChange={handleChange}
+                                    type="url"
+                                    required
+                                />
+                                {/**
+                                 * TODO: add additional validation for correct website
+                                 * !entry.link.startsWith("https://archiveofourown.org/works/") 
+                                    && !entry.link.startsWith("https://www.fanfiction.net/s/"))
+                                 */}
+                                <Form.Control.Feedback type="invalid">
+                                    Must be a URL of a single work from AO3 or FFnet.
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+                        <ButtonGroup className="modal-options d-flex flex-row">
+                            <Button variant="secondary" onClick={props.hide}>Cancel</Button>
+                            <Button variant="primary" type="submit">Add</Button>
+                        </ButtonGroup>
+                    </Form>
+                </Tab>
+
+            </Tabs>
         </Modal.Body>
     </Modal> 
 

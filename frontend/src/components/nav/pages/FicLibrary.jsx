@@ -112,9 +112,17 @@ export default function FicLibrary(props) {
         resetActiveEntry();
         setShowAddModal(modes.addMode);
     }, [modes.addMode])
-    async function handleAdd(newEntry) { // should take Object formatted like activeEntry
 
-        const resp = await fetch("http://localhost:53706/api/media?type=Fics", {
+    async function handleAdd(newEntry) { // should take Object formatted like activeEntry
+        let apiCall = "http://localhost:53706/api/media?type=Fics"; // manual-tab submission
+        if(!newEntry.title) { // if there's no title, it was a link-tab submission
+            let siteRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^.:\/\n]+)/i;
+            let site = newEntry.link.match(siteRegex)[1].toLowerCase();
+            let workid = newEntry.link.match(/\d+/m);
+            apiCall = `http://localhost:53706/api/media?type=Fics&site=${site}&workid=${workid}`;
+        }
+        
+        const resp = await fetch(apiCall, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

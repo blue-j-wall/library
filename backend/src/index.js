@@ -4,6 +4,8 @@
 
 import express from 'express';
 import sqlite3 from 'sqlite3';
+import * as cheerio from 'cheerio';
+import * as axios from 'axios';
 import { open } from 'sqlite'
 
 import { applyRateLimiting, applyLooseCORSPolicy, applyBodyParsing, applyLogging, applyErrorCatching } from './api-middleware.js'
@@ -11,7 +13,7 @@ import { applyRateLimiting, applyLooseCORSPolicy, applyBodyParsing, applyLogging
 const app = express();
 const port = 53706;
 
-
+// SQL commands
 const GET_FICS_TABLE_SQL = 'SELECT * FROM Fics;'
 const GET_BOOKS_TABLE_SQL = 'SELECT * FROM Books;'
 const GET_MOVIES_TABLE_SQL = 'SELECT * FROM Movies;'
@@ -212,16 +214,33 @@ app.get('/api/media/latest', async (req, res) => {
 // ADD ENTRY
 app.post('/api/media', async (req, res) => {
     const table = req.query.type;
+    const site = req.query.site;
+    const workid = req.query.workid;
     const entry = req.body.entry;
 
     try {
         switch(table) {
         case "Fics":
-            const retFic = await db.get(ADD_FIC_SQL, entry.title, entry.author, entry.fandoms, entry.wordcount, entry.comments, entry.link);
-            res.status(200).send({
-                msg: "Successfully posted!",
-                id: retFic.id
-            });
+            if(site && workid) { // web-scraping
+                let url = "https://";
+                if(site === "archiveofourown") 
+                    url += "archiveofourown.org/works/";
+                else if (site === "fanfiction") 
+                    url += "www.fanfiction.net/s/";
+                url += workid;
+
+                /*await axios(url).then((response) => {
+                    const html = response.data;
+                    const $ = cheerio.load(html);
+                })*/
+            }
+            else {
+                const retFic = await db.get(ADD_FIC_SQL, entry.title, entry.author, entry.fandoms, entry.wordcount, entry.comments, entry.link);
+                res.status(200).send({
+                    msg: "Successfully posted!",
+                    id: retFic.id
+                });
+            }
             break;
         case "Books":
             const retBook = await db.get(ADD_BOOK_SQL, entry.title, entry.author, entry.genre, entry.comments);
