@@ -3,8 +3,6 @@ import { useState, useEffect, useContext } from 'react'
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
-import * as formik from 'formik';
-
 import ModeContext from '../contexts/ModeContext';
 
 const AddModal = (props) => {
@@ -18,10 +16,6 @@ const AddModal = (props) => {
         resetEntryAndForms();
         setValidated(false);
     }, [modes.addMode, key]);
-
-    useEffect(() => {
-        console.log(validated);
-    }, [validated])
 
     const resetEntryAndForms = () => {
         setEntry({
@@ -49,8 +43,18 @@ const AddModal = (props) => {
         setValidated(true);
         e.preventDefault();
         const form = e.target;
-        if (form.checkValidity() === true) 
-            props.confirm(entry);
+        if (form.checkValidity() === true) {
+            // actually valid if: submission on manual-tab, or
+            // submitted url on link-tab matches the supported sites
+            if(entry.title || entry.link.startsWith("https://archiveofourown.org/works/") ||
+                entry.link.startsWith("https://www.fanfiction.net/s/")) { 
+                props.confirm(entry);
+            }
+            else { // link-tab submission was not actually valid
+                resetEntryAndForms();
+                e.stopPropagation();
+            }
+        }
         else 
             e.stopPropagation();
     };
@@ -181,11 +185,6 @@ const AddModal = (props) => {
                                     type="url"
                                     required
                                 />
-                                {/**
-                                 * TODO: add additional validation for correct website
-                                 * !entry.link.startsWith("https://archiveofourown.org/works/") 
-                                    && !entry.link.startsWith("https://www.fanfiction.net/s/"))
-                                 */}
                                 <Form.Control.Feedback type="invalid">
                                     Must be a URL of a single work from AO3 or FFnet.
                                 </Form.Control.Feedback>
